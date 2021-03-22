@@ -7,15 +7,18 @@
         <th scope="col">NIP</th>
         <th scope="col">Nama</th>
         <th scope="col">Unit Kerja</th>
+        <th scope="col">Aksi</th>
+
       </tr>
     </thead>
     <tbody>
         {% for data in pegawai %}
-      <tr>
-        <th scope="row">{{forloop.counter}}</th>
-        <td>{{data.nama}}</td>
+      <tr >
+        <th scope="row" >{{forloop.counter}}</th>
+        <td >{{data.nama}} </td>
         <td>{{data.nip}}</td>
         <td>{{data.opd}}</td>
+        <td><a class="btn btn-sm btn-info" href="{% url 'pegawai:detail' %} ">Detail</a></td>
       </tr>
       {% endfor %}
   </table>

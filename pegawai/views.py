@@ -11,6 +11,8 @@ from .models import *
 import urllib, json
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views.generic import ListView
+from . forms import *   
 
 
 # Create your views here.
@@ -35,23 +37,7 @@ from django.contrib import messages
 #     return render(request, 'pegawai/index.html', context)
 
 def LoginView(request):
-
     if request.POST:
-    #     user = authenticate(username = request.POST['username'],password=request.POST['password'])
-    #     if user.is_active:
-    #         try :
-    #             cek_akun = get_object_or_404(AkunModel, akun_id = user.id )
-    #             request.session['username'] = user.id.username
-    #             request.session['jenis_akun'] = cek_akun.jenis_akun
-    #             request.session['opd_akses'] = cek_akun.opd_akses
-    #             print(cek_akun)
-    #             login(request, user)
-    #         except :
-    #             messages.add_message(request, messages.INFO, 'Akun ini belum terhubung dengan data karyawan, silahkan hubungi administrator')
-    #         return redirect('pegawai:index')
-    #     else:
-    #         messages.add_message(request, messages.INFO, 'User belum terverifikasi')
-    # return render(request, 'pegawai:index')
         user = authenticate(username=request.POST['username'], password=request.POST['password']) 
         if user is not None:
             akun = AkunModel.objects.get(akun_id=user.id)
@@ -83,5 +69,20 @@ def LogoutView(request):
 def IndexView(request):
     request.session['username']
     opdakses = request.session['opd_akses']
-    pegawai = PegawaiModel.objects.all().filter(opd_id = opdakses)
-    return render(request, 'pegawai/index.html', {'pegawai':pegawai} )
+    pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
+    context = {
+        'pegawai':pegawai
+        }
+    return render(request, 'pegawai/index.html', context )
+
+@login_required()
+def DetailView(request, id):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    pegawai = PegawaiModel.objects.get(id=id)
+    form = DetailForm(instance=pegawai)
+    context = {
+        'form':form
+    }
+    print(context)
+    return render(request, 'pegawai/detail.html', context)

@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import authenticate
+from . models import *
 
 
 class UserLoginForm(forms.Form):
@@ -19,3 +20,8 @@ class UserLoginForm(forms.Form):
             if not user.is_active:
                 raise forms.ValidationError('This user is not active')
         return super(UserLoginForm, self).clean(*args, **kwargs)
+
+class DetailForm(forms.ModelForm):
+    class Meta:
+        model = PegawaiModel
+        fields = '__all__'
