@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Nomor</th>
+        <th scope="col">NIP</th>
+        <th scope="col">Nama</th>
+        <th scope="col">Unit Kerja</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for data in pegawai %}
+      <tr>
+        <th scope="row">{{forloop.counter}}</th>
+        <td>{{data.nama}}</td>
+        <td>{{data.nip}}</td>
+        <td>{{data.opd}}</td>
+      </tr>
+      {% endfor %}
+  </table>
+{% endblock %}  
