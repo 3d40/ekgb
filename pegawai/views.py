@@ -12,29 +12,16 @@ import urllib, json
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import ListView
-from . forms import *   
+from . forms import *
+import datetime
+from dateutil.relativedelta import *   
 
 
 # Create your views here.
 
-#alamat = 'http://202.179.184.151/'
-
-# def LoginView(request):
-#     form = UserLoginForm(request.POST or None)
-#     if not form.is_valid():
-#         return render(request, 'login/login.html')
-#     else :
-#         username = form.cleaned_data.get('username')
-#         password = form.cleaned_data.get('password')
-#         user = authenticate(username=username, password=password)
-#         akun = get_object_or_404(AkunModel, akun_id= user.id)
-
-#         request.session['username'] = username
-#         request.session['opd_akses'] = akun.opd_akses
-#         request.session['jenis_akun'] = akun.jenis_akun 
-#         login(request, user)
-#         context ={}
-#     return render(request, 'pegawai/index.html', context)
+urlpegawai = 'http://202.179.184.151/nip/?search='
+urlcompany = 'http://202.179.184.151/nip/?company='
+urlpangkat = 'http://202.179.184.151/riwayatpangkat/?search='
 
 def LoginView(request):
     if request.POST:
@@ -77,12 +64,76 @@ def IndexView(request):
 
 @login_required()
 def DetailView(request, id):
+    template_name= 'pegawai/detail.html'
     request.session['username']
     opdakses = request.session['opd_akses']
-    pegawai = PegawaiModel.objects.get(id=id)
-    form = DetailForm(instance=pegawai)
-    context = {
-        'form':form
-    }
-    print(context)
-    return render(request, 'pegawai/detail.html', context)
+    pegawai = get_object_or_404(PegawaiModel, id=id)
+    pangkat = urllib.request.urlopen('http://202.179.184.151/riwayatpangkat/?search='+ str(pegawai.id))
+    json_pangkat = json.load(pangkat)
+
+
+    for pkt in json_pangkat:
+        list_pkt = GolonganHistoryModel.objects.get_or_create(
+            id =pkt['id'],
+            pengguna = pkt['partner'],
+            nama_id = pkt['golongan_id_history'],
+            nip = pegawai.nip,
+            jenis = pkt['jenis'],
+            tanggal = pkt['date']
+            )
+    range_golongan = GolonganHistoryModel.objects.filter(pengguna=pkt['partner'])
+    for x in range_golongan:
+        tmt_cpns = get_object_or_404(GolonganHistoryModel, jenis = "cpns", pengguna=pkt['partner'])
+        mk_tahun = relativedelta(x.tanggal, tmt_cpns.tanggal)
+        mk_total = relativedelta(datetime.datetime.now(), tmt_cpns.tanggal)
+        #print ("Total Masa Kerja", mk_total)
+        print(mk_tahun.years, mk_tahun.months)
+    akun = PegawaiModel.objects.filter(id=id).update(
+        mk_tahun = mk_tahun.years,
+        mk_bulan =mk_tahun.months,
+        tmt_cpns=tmt_cpns.tanggal
+        )
+    # mk_tahun = mk_tahun.years,mk_bulan =mk_tahun.months, tmt_cpns=tmt_cpns.tanggal)
+    # if akun.exists():
+    #     (PegawaiModel.id=id).
+    #         mk_tahun = mk_tahun.years,
+    #         mk_bulan =mk_tahun.months
+    #     )
+    print(akun)
+
+    return render(request, template_name, {'pegawai':pegawai, 'json_pangkat':json_pangkat, 'range_golongan':range_golongan})
+
+def RiwayatPangkatView(request,id):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    pegawai = get_object_or_404(PegawaiModel, id=id)
+    return render(request,'pegawai/riwayatpangkat.html')
+
+    
+def RiwayatPangkatView(request):
+    return render(request,'pegawai/riwayatpangkat.html')
+
+
+# @login_required
+# def UploadPegawai(request):
+#     request.session['username']
+#     opdakses = request.session['opd_akses']
+#     pegawai = urllib.request.urlopen('http://202.179.184.151/nip/?company='+ str(opdakses))
+#     list_pegawai = json.load(pegawai)
+#     opd = OpdModel.objects.all()
+#     for data in list_pegawai:
+#         PegawaiModel.objects.get_or_create(
+#             id=data['id'],
+#             nama=data['name'],
+#             #jabatan=data['jabatan_data'],
+#             nip=data['nip'],
+#             opd=data['company_id'],
+#             pangkat=data['golongan_id'],
+#             pengguna=data['user_id']
+#             )
+#         # AkunModel.objects.get_or_create(
+#         #     akun =data['user_id'],
+#         #     pegawai = data['id'],
+#         #     jenis_akun = 'pegawai'
+#         # ) 
+#     return render(request, 'pegawai/uploadperopd.html',context={'json_str':list_pegawai, 'opd':opd})

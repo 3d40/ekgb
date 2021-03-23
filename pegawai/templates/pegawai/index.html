@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% if pegawai %}
 <table class="table">
     <thead class="thead-dark">
       <tr>
@@ -15,11 +16,12 @@
         {% for data in pegawai %}
       <tr >
         <th scope="row" >{{forloop.counter}}</th>
-        <td >{{data.nama}} </td>
+        <td> <li> <a href="{% url 'pegawai:detail' data.id %}">{{data.nama}}</a></li></td>
         <td>{{data.nip}}</td>
         <td>{{data.opd}}</td>
         <td><a class="btn btn-sm btn-info" href="#">Detail</a></td>
       </tr>
       {% endfor %}
   </table>
+{% endif %}
 {% endblock %}  

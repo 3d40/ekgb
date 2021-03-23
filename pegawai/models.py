@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 from django.utils import timezone
 
 # Create your models here.
@@ -13,7 +14,7 @@ class PegawaiModel(models.Model):
     alamat  = models.CharField(max_length=255)
     telpon  = models.CharField(max_length=30)
     gaji_skrg = models.IntegerField(blank=True, null=True, default=0)
-    tmt_cpns = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    tmt_cpns = models.DateField(default=datetime.datetime.now, null=True, blank=True)
     mk_tahun = models.IntegerField(blank=True, null=True)
     mk_bulan = models.IntegerField(blank=True, null=True)
     fhoto = models.ImageField(upload_to ='upload/fhoto/')
@@ -32,13 +33,18 @@ class GolonganModel(models.Model):
 class GolonganHistoryModel(models.Model):
     pengguna = models.IntegerField(null=True, blank=True)
     nip = models.CharField(max_length=50, null=True, blank=True)
-    nama = models.CharField(max_length=50)
+    nama = models.ForeignKey('GolonganModel',models.DO_NOTHING, null=True,blank=True,default=24)
+    nomor_sk = models.CharField(max_length=150, null=True,blank=True, default="S-10225/BKD-2.2/")
     jenis = models.CharField(max_length=50, null=True, blank=True)
     tanggal = models.DateField(default=2021-3-20, blank=True, null=True)
     dokumen = models.FileField(upload_to='upload/skpangkat/', blank=True, null=True)
     
+    class Meta:
+        managed=True,
+    
     def __str__(self):
-        return self.nama
+        return self.nip
+        
 
 class OpdModel(models.Model):
     nama = models.CharField(max_length=255)

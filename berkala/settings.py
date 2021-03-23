@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'berkala.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'kgb',
+        'NAME': 'berkala',
         'USER': 'datainfo',
         'PASSWORD': 'admin',
         'HOST': 'localhost',

@@ -6,12 +6,13 @@ urlpatterns = [
     path('', views.LoginView, name='login'),
     path('logout/', views.LogoutView, name='logout'),
     path('index/', views.IndexView, name='index'),
-    path('detail/<int:id>/', views.DetailView, name='detail')
+    path('detail/<int:id>/', views.DetailView, name='detail'),  
+    path('riwayatpangkat', views.RiwayatPangkatView, name='riwayatpangkat'),
+    #path('riwayatkgb', views.RiwayatKgbView, name='riwayatkgb'),
     # path('welcome', views.IndexView, name='welcome'),
     # path('uploaduser', views.UploadView, name='uploaduser'),
-    # path('uploadpegawai', views.UploadView, name='uploadpegawai'),
+    #path('uploadpegawai', views.UploadPegawai, name='uploadpegawai'),
     # path('detail', views.DetailView, name = 'detail'),
     # path('peropd', views.PerOpdView, name = 'uploadperopd'),
-    # path('riwawatkgb', views.RiwayatKgbView, name='riwayatkgb'),
-    # path('riwayatpangkat', views.RiwayatPangkatView, name='riwayatpangkat')
+   
 ]
