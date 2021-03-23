@@ -5,9 +5,9 @@
     <div class="card-header bg-light">
         Riwayat Pangkat
         <hr>
-        Nama : Sigit Eka Karsa
+        Nama : {{pegawai.nama}}
         <br>
-        NIP  : 198612172011011003
+        NIP  : {{pegawai.nip}}
     </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -16,17 +16,21 @@
                     <tr>
                         <th>No</th>
                         <th>Jenis Kenaikan Pangkat</th>
-                        <th>Nomor SK</th>
+                        <th>Jenjang Golongan</th>
                         <th>Tanggal</th>
+                        <th>Masa Kerja</th>
                     </tr>
                     </thead>
                     <tbody>
+                        {% for pangkat in list_pkt %}
                         <tr>
-                            <td>1</td>
-                            <td>Reguler</td>
-                            <td>S-10225/BKD-2.2/III/2012</td>
-                            <td>01-01-2019</td>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{pangkat.jenis}}</td>
+                            <td>{{pangkat.nama}}</td>
+                            <td>{{pangkat.tanggal}}</td>
+                            <td>{{pangkat.mk_tahun}} Tahun {{pangkat.mk_bulan}} Bulan</td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

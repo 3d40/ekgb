@@ -8,4 +8,4 @@ from pegawai.models import *
 #     search_fields = ['nama', 'pegawai']
 #     list_per_page = 25
 admin.site.register(AkunModel)
-
+admin.site.register(GolonganModel)

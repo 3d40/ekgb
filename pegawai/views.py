@@ -69,6 +69,7 @@ def DetailView(request, id):
     opdakses = request.session['opd_akses']
     pegawai = get_object_or_404(PegawaiModel, id=id)
     pangkat = urllib.request.urlopen('http://202.179.184.151/riwayatpangkat/?search='+ str(pegawai.id))
+
     json_pangkat = json.load(pangkat)
 
 
@@ -82,6 +83,8 @@ def DetailView(request, id):
             tanggal = pkt['date']
             )
     range_golongan = GolonganHistoryModel.objects.filter(pengguna=pkt['partner'])
+    request.session['pegawai'] = pkt['partner']
+
     for x in range_golongan:
         tmt_cpns = get_object_or_404(GolonganHistoryModel, jenis = "cpns", pengguna=pkt['partner'])
         mk_tahun = relativedelta(x.tanggal, tmt_cpns.tanggal)
@@ -99,7 +102,6 @@ def DetailView(request, id):
     #         mk_tahun = mk_tahun.years,
     #         mk_bulan =mk_tahun.months
     #     )
-    print(akun)
 
     return render(request, template_name, {'pegawai':pegawai, 'json_pangkat':json_pangkat, 'range_golongan':range_golongan})
 
@@ -110,8 +112,17 @@ def RiwayatPangkatView(request,id):
     return render(request,'pegawai/riwayatpangkat.html')
 
     
-def RiwayatPangkatView(request):
-    return render(request,'pegawai/riwayatpangkat.html')
+def RiwayatPangkatView(request,id):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    pegawai = get_object_or_404(PegawaiModel, id=id)
+    list_pkt = GolonganHistoryModel.objects.filter(pengguna=pegawai.id)
+    print(list_pkt)
+
+
+
+    return render(request,'pegawai/riwayatpangkat.html',{'pegawai':pegawai, 'list_pkt':list_pkt})
+
 
 
 # @login_required

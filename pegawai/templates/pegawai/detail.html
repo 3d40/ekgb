@@ -80,8 +80,9 @@
                     <tr>
                         <th>No</th>
                         <th>Jenis Kenaikan Pangkat</th>
-                        <th>Nomor SK</th>
+                        <th>Jenjang Golongan</th>
                         <th>Tanggal</th>
+                        <th>Masa Kerja</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -89,8 +90,9 @@
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td>{{pangkat.jenis}}</td>
-                            <td>S-10225/BKD-2.2/III/2012</td>
+                            <td>{{pangkat.nama}}</td>
                             <td>{{pangkat.tanggal}}</td>
+                            <td>{{pangkat.mk_tahun}} Tahun {{pangkat.mk_bulan}} Bulan</td>
                         </tr>
                         {% endfor %}
                     </tbody>
