@@ -15,8 +15,6 @@ class PegawaiModel(models.Model):
     telpon  = models.CharField(max_length=30)
     gaji_skrg = models.IntegerField(blank=True, null=True, default=0)
     tmt_cpns = models.DateField(default=datetime.datetime.now, null=True, blank=True)
-    mk_tahun = models.IntegerField(blank=True, null=True)
-    mk_bulan = models.IntegerField(blank=True, null=True)
     fhoto = models.ImageField(upload_to ='upload/fhoto/')
 
     def __str__(self):
