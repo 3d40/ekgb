@@ -19,7 +19,7 @@
         <td> <li> <a href="{% url 'pegawai:detail' data.id %}">{{data.nama}}</a></li></td>
         <td>{{data.nip}}</td>
         <td>{{data.opd}}</td>
-        <td><a class="btn btn-sm btn-info" href="#">Detail</a></td>
+        <td><a class="btn btn-sm btn-info"href="{% url 'pegawai:riwayatpangkat' data.id %}">Riwayat Pangkat</a></td>
       </tr>
       {% endfor %}
   </table>

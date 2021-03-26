@@ -37,8 +37,13 @@ class GolonganHistoryModel(models.Model):
     jenis = models.CharField(max_length=50, null=True, blank=True)
     tanggal = models.DateField(default=2021-3-20, blank=True, null=True)
     dokumen = models.FileField(upload_to='upload/skpangkat/', blank=True, null=True)
+<<<<<<< HEAD
     mk_tahun = models.IntegerField(null=True, default=0)
     mk_bulan = models.IntegerField(null=True, default=0)
+=======
+    mk_tahun = models.IntegerField(blank=True, null=True)
+    mk_bulan =  models.IntegerField(blank=True, null=True)
+>>>>>>> 07c1ed949029e742a377262f916420ff6f4997ee
     
     class Meta:
         managed=True,
