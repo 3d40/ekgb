@@ -15,9 +15,8 @@ class PegawaiModel(models.Model):
     telpon  = models.CharField(max_length=30)
     gaji_skrg = models.IntegerField(blank=True, null=True, default=0)
     tmt_cpns = models.DateField(default=datetime.datetime.now, null=True, blank=True)
-    mk_tahun = models.IntegerField(blank=True, null=True)
-    mk_bulan = models.IntegerField(blank=True, null=True)
     fhoto = models.ImageField(upload_to ='upload/fhoto/')
+    
 
     def __str__(self):
         return self.nama
@@ -38,6 +37,8 @@ class GolonganHistoryModel(models.Model):
     jenis = models.CharField(max_length=50, null=True, blank=True)
     tanggal = models.DateField(default=2021-3-20, blank=True, null=True)
     dokumen = models.FileField(upload_to='upload/skpangkat/', blank=True, null=True)
+    mk_tahun = models.IntegerField(null=True, default=0)
+    mk_bulan = models.IntegerField(null=True, default=0)
     
     class Meta:
         managed=True,
@@ -56,8 +57,16 @@ class OpdModel(models.Model):
 class JabatanModel(models.Model):
     pilihan_jenis = [
         ('struktural', 'Struktural'),
-        ('jft', 'Fungsional'),
-        ('jfu','Fungsional Umum')
+        ('jfu','Fungsional Umum'),
+        ('jft1', 'Ahli Pertma'),
+        ('jft2', 'Ahli Muda'),
+        ('jft3', 'Ahli Madya'),
+        ('jft4', 'Ahli Utama'),
+        ('jft5', 'Pelaksana Pemula'),
+        ('jft6', 'Pelaksana'),
+        ('jft7', 'Ahli Utama'),
+
+
     ]
     jenis = models.CharField(max_length=30, choices=pilihan_jenis, default='jfu')
     nama = models.CharField(max_length=100)
@@ -126,3 +135,6 @@ class ProsesBerkalaModel(models.Model):
     
     def __str__(self):
         return self.pegawai
+
+class DaftarNominatifModel(models.Model):
+    pass

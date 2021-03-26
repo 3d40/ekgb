@@ -33,10 +33,10 @@ def LoginView(request):
                 try:
                     request.session['username'] = request.POST['username']
                     login(request, user)
+                    return redirect('pegawai:index')
                 except:
-                    messages.add_message(request, messages.INFO, 'Akun ini belum terhubung dengan data karyawan, silahkan hubungi administrator')
-                return redirect('pegawai:index')
-            else:   
+                    messages.add_message(request, messages.INFO, 'User belum terverifikasi')
+            else:
                 messages.add_message(request, messages.INFO, 'User belum terverifikasi')
         else:
             messages.add_message(request, messages.INFO, 'Username atau password Anda salah')
@@ -70,10 +70,8 @@ def DetailView(request, id):
     pegawai = get_object_or_404(PegawaiModel, id=id)
     pangkat = urllib.request.urlopen('http://202.179.184.151/riwayatpangkat/?search='+ str(pegawai.id))
     json_pangkat = json.load(pangkat)
-
-
     for pkt in json_pangkat:
-        list_pkt = GolonganHistoryModel.objects.get_or_create(
+        list_pkt = GolonganHistoryModel.objects.filter().update_or_create(
             id =pkt['id'],
             pengguna = pkt['partner'],
             nama_id = pkt['golongan_id_history'],
@@ -81,26 +79,38 @@ def DetailView(request, id):
             jenis = pkt['jenis'],
             tanggal = pkt['date']
             )
-    range_golongan = GolonganHistoryModel.objects.filter(pengguna=pkt['partner'])
+    range_pegawai = PegawaiModel.objects.filter(pengguna=pkt['partner'])
+    range_golongan = GolonganHistoryModel.objects.filter(pengguna=pkt['partner']).order_by('-tanggal')
+    # golonganPegawai = get_object_or_404(GolonganHistoryModel, pengguna=pkt['partner'])
+    tmt_cpns = get_object_or_404(GolonganHistoryModel, jenis="cpns", pengguna=pkt['partner'])
+    
+    
+    # Masa Kerja Golongan I dan II
     for x in range_golongan:
-        tmt_cpns = get_object_or_404(GolonganHistoryModel, jenis = "cpns", pengguna=pkt['partner'])
-        mk_tahun = relativedelta(x.tanggal, tmt_cpns.tanggal)
-        mk_total = relativedelta(datetime.datetime.now(), tmt_cpns.tanggal)
-        #print ("Total Masa Kerja", mk_total)
-        print(mk_tahun.years, mk_tahun.months)
-    akun = PegawaiModel.objects.filter(id=id).update(
-        mk_tahun = mk_tahun.years,
-        mk_bulan =mk_tahun.months,
-        tmt_cpns=tmt_cpns.tanggal
-        )
-    # mk_tahun = mk_tahun.years,mk_bulan =mk_tahun.months, tmt_cpns=tmt_cpns.tanggal)
-    # if akun.exists():
-    #     (PegawaiModel.id=id).
-    #         mk_tahun = mk_tahun.years,
-    #         mk_bulan =mk_tahun.months
-    #     )
-    print(akun)
-
+        
+        tmt_cpns = get_object_or_404(GolonganHistoryModel, jenis="cpns", pengguna=x.pengguna)
+    if tmt_cpns.nama_id < 22:
+        GolonganHistoryModel.objects.filter(jenis="cpns", pengguna=x.pengguna).update(
+            mk_tahun = 3,
+            mk_bulan = 0)
+    elif tmt_cpns.nama_id > 31:
+        GolonganHistoryModel.objects.filter(jenis="cpns", pengguna=x.pengguna).update(
+            mk_tahun = 3,
+            mk_bulan = 0)
+    else:
+        GolonganHistoryModel.objects.filter(jenis="cpns", pengguna=x.pengguna).update(
+            mk_tahun = 0,
+            mk_bulan = 0)
+    
+    # Masa Kerja Golongan III
+    for y in range_golongan:
+        mk = relativedelta(y.tanggal, tmt_cpns.tanggal)
+        print(mk.years, "Tahun", mk.months, "Bulan")
+        if y.jenis != "cpns":
+            y.mk_tahun = mk.years
+            y.mk_bulan = mk.months
+    
+        
     return render(request, template_name, {'pegawai':pegawai, 'json_pangkat':json_pangkat, 'range_golongan':range_golongan})
 
 def RiwayatPangkatView(request,id):

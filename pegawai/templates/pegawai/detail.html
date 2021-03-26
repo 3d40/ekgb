@@ -66,12 +66,11 @@
 </div>
 
 <div class="col-md-12">
-    <!-- <div class="card-header bg-light">
+    <div class="card-header bg-light">
         Riwayat Pangkat
         <hr>
-        Nama : Sigit Eka Karsa
-        <br>
-        NIP  : 198612172011011003 -->
+        Nama : {{pegawai.nama}}        <br>
+        NIP  : {{pegawai.nip}}
     </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -80,17 +79,23 @@
                     <tr>
                         <th>No</th>
                         <th>Jenis Kenaikan Pangkat</th>
+                        <th>Golongan</th>
                         <th>Nomor SK</th>
                         <th>Tanggal</th>
+                        <th>Masa Kerja</th>
+
                     </tr>
                     </thead>
                     <tbody>
+
                         {% for pangkat in range_golongan %}
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td>{{pangkat.jenis}}</td>
+                            <td>{{pangkat.nama}}</td>
                             <td>S-10225/BKD-2.2/III/2012</td>
                             <td>{{pangkat.tanggal}}</td>
+                            <td>{{pangkat.mk_tahun}} Tahun, {{pangkat.mk_bulan}} Bulan</td>
                         </tr>
                         {% endfor %}
                     </tbody>
