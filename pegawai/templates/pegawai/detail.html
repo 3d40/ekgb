@@ -40,21 +40,21 @@
                     </div>
                      <div class="form-group">
                         <label for="pendidikanterakhir" class="form-control-label">Pendidikan Terakhir :</label>
-                        <input id="pendidikanterakhir" name="skpd" class="form-control" value="{{ i.Level_Pendidikan }}" readonly />
+                        <input id="pendidikanterakhir" name="skpd" class="form-control" value="{{ pegawai.Level_Pendidikan }}" readonly />
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="tmptlahir" class="form-control-label">Tempat Lahir :</label>
-                        <input id="tmptlahir" name="pangol" class="form-control" value="{{ i.tempat_lahir }}" readonly />
+                        <input id="tmptlahir" name="pangol" class="form-control" value="{{ pegawai.tempat_lahir }}" readonly />
                     </div>
                     <div class="form-group">
                         <label for="jnsklmn" class="form-control-label">Jenis Kelamin :</label>
                         <input id="jnsklmn" name="skpd" class="form-control" value="{{ i.jenis_kelamin }}" readonly />
-                    </div>
+                    </div>  
                     <div class="form-group">
-                        <label for="tmtpns" class="form-control-label">TMT PNS :</label>
-                        <input id="tmtpns" name="skpd" class="form-control" value="{{ i.tmt_pns }}" readonly />
+                        <label for="tmtpns" class="form-control-label">TMT CPNS :</label>
+                        <input id="tmtpns" name="skpd" class="form-control" value="{{ pegawai.tmt_cpns}}" readonly />
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -65,7 +65,7 @@
     </div>
 </div>
 
-<div class="col-md-12">
+<!-- <div class="col-md-12">
     <div class="card-header bg-light">
         Riwayat Pangkat
         <hr>
@@ -79,34 +79,19 @@
                     <tr>
                         <th>No</th>
                         <th>Jenis Kenaikan Pangkat</th>
-<<<<<<< HEAD
                         <th>Golongan</th>
                         <th>Nomor SK</th>
                         <th>Tanggal</th>
-                        <th>Masa Kerja</th>
-
-=======
-                        <th>Jenjang Golongan</th>
-                        <th>Tanggal</th>
-                        <th>Masa Kerja</th>
->>>>>>> 07c1ed949029e742a377262f916420ff6f4997ee
                     </tr>
                     </thead>
                     <tbody>
-
                         {% for pangkat in range_golongan %}
                         <tr>
                             <td>{{forloop.counter}}</td>
                             <td>{{pangkat.jenis}}</td>
                             <td>{{pangkat.nama}}</td>
-<<<<<<< HEAD
                             <td>S-10225/BKD-2.2/III/2012</td>
                             <td>{{pangkat.tanggal}}</td>
-                            <td>{{pangkat.mk_tahun}} Tahun, {{pangkat.mk_bulan}} Bulan</td>
-=======
-                            <td>{{pangkat.tanggal}}</td>
-                            <td>{{pangkat.mk_tahun}} Tahun {{pangkat.mk_bulan}} Bulan</td>
->>>>>>> 07c1ed949029e742a377262f916420ff6f4997ee
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -114,5 +99,5 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 {% endblock %}

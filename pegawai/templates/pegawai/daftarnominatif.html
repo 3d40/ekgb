@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- search -->
+<div class="form-group">
+  <form action="{% url 'pegawai:nominatif'  %}" method="POST">
+    {% csrf_token %}
+    <input type="date" name ="tmtkgb" >
+    <button class="btn">Cari</button>
+  </form>
+</div>
+
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Nomor</th>
+        <th scope="col">NIP</th>
+        <th scope="col">Nama</th>
+        <th scope="col">Unit Kerja</th>
+        <th scope="col">KGB Berikutnya</th>
+        <th scope="col">Dengan Masa Kerja</th>
+        <th scope="col">Aksi</th>
+
+
+      </tr>
+    </thead>
+    <tbody>
+        {% for data in object_list %}
+        <th scope="row" >{{forloop.counter}}</th>
+        <td><a href="{% url 'pegawai:detail' data.id %}">{{data.nip}}</a></td>
+        <td><a href="{% url 'pegawai:detail' data.id %}">{{data.nama}}</a></td>
+        <td>{{data.opd}}</td>
+        <td>{{tmtkgb_date}}</td>
+        <td>{{mk_tahun}} Tahun {{mk_bulan}} Bulan</a></td>
+      </tr>
+      {% endfor %}
+  </table>
+
+
+
+  {% include 'paginator.html'  %}
+
+  {% endblock %}

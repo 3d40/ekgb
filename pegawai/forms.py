@@ -20,8 +20,9 @@ class UserLoginForm(forms.Form):
             if not user.is_active:
                 raise forms.ValidationError('This user is not active')
         return super(UserLoginForm, self).clean(*args, **kwargs)
-
-class DetailForm(forms.ModelForm):
+    
+class GolonganHistoryForm(forms.ModelForm):
     class Meta:
-        model = PegawaiModel
-        fields = '__all__'
+        models = GolonganHistoryModel
+        fields = ['nama','nomor_sk','tanggal','mk_tahun','mk_bulan']
+    

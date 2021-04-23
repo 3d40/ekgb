@@ -14,7 +14,14 @@ from django.contrib import messages
 from django.views.generic import ListView
 from . forms import *
 import datetime
-from dateutil.relativedelta import *   
+from dateutil.relativedelta import *
+from django.core.exceptions import MultipleObjectsReturned
+from itertools import zip_longest
+from django.http import Http404
+from django.views.generic import ListView, DetailView, View
+from django.views.generic.detail import SingleObjectMixin
+from .filter import FilterPegawai
+
 
 
 # Create your views here.
@@ -33,7 +40,7 @@ def LoginView(request):
                 try:
                     request.session['username'] = request.POST['username']
                     login(request, user)
-                    return redirect('pegawai:index')
+                    return redirect('pegawai:pegawai')
                 except:
                     messages.add_message(request, messages.INFO, 'User belum terverifikasi')
             else:
@@ -57,25 +64,27 @@ def IndexView(request):
     request.session['username']
     opdakses = request.session['opd_akses']
     pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
-    context = {
-        'pegawai':pegawai
-        }
-    return render(request, 'pegawai/index.html', context )
+    jumlah = len(pegawai)
+    #cari TMT_CPNS
+    for x in pegawai :
+        tahun = int(x.nip[8:12])
+        bulan = int(x.nip[12:14])
+        tanggal = 1
+        cpns = datetime.date(tahun,bulan,tanggal)
+        print(cpns)
+        q = get_object_or_404(PegawaiModel, id = x.id)
+        q.tmt_cpns = cpns
+        q.save()
+    return render(request, 'pegawai/index.html', {'pegawai':pegawai})
 
 @login_required()
-def DetailView(request, id):
+def HitungPangkatView(request, id):
     template_name= 'pegawai/detail.html'
     request.session['username']
     opdakses = request.session['opd_akses']
     pegawai = get_object_or_404(PegawaiModel, id=id)
     pangkat = urllib.request.urlopen('http://202.179.184.151/riwayatpangkat/?search='+ str(pegawai.id))
-<<<<<<< HEAD
     json_pangkat = json.load(pangkat)
-=======
-
-    json_pangkat = json.load(pangkat)
-
->>>>>>> 07c1ed949029e742a377262f916420ff6f4997ee
     for pkt in json_pangkat:
         list_pkt = GolonganHistoryModel.objects.filter().update_or_create(
             id =pkt['id'],
@@ -85,122 +94,88 @@ def DetailView(request, id):
             jenis = pkt['jenis'],
             tanggal = pkt['date']
             )
-<<<<<<< HEAD
     range_pegawai = PegawaiModel.objects.filter(pengguna=pkt['partner'])
     range_golongan = GolonganHistoryModel.objects.filter(pengguna=pkt['partner']).order_by('-tanggal')
-    # golonganPegawai = get_object_or_404(GolonganHistoryModel, pengguna=pkt['partner'])
-    tmt_cpns = get_object_or_404(GolonganHistoryModel, jenis="cpns", pengguna=pkt['partner'])
-    
-    
-    # Masa Kerja Golongan I dan II
-    for x in range_golongan:
-        
-        tmt_cpns = get_object_or_404(GolonganHistoryModel, jenis="cpns", pengguna=x.pengguna)
-    if tmt_cpns.nama_id < 22:
-        GolonganHistoryModel.objects.filter(jenis="cpns", pengguna=x.pengguna).update(
-            mk_tahun = 3,
-            mk_bulan = 0)
-    elif tmt_cpns.nama_id > 31:
-        GolonganHistoryModel.objects.filter(jenis="cpns", pengguna=x.pengguna).update(
-            mk_tahun = 3,
-            mk_bulan = 0)
-    else:
-        GolonganHistoryModel.objects.filter(jenis="cpns", pengguna=x.pengguna).update(
-            mk_tahun = 0,
-            mk_bulan = 0)
-    
-    # Masa Kerja Golongan III
-    for y in range_golongan:
-        mk = relativedelta(y.tanggal, tmt_cpns.tanggal)
-        print(mk.years, "Tahun", mk.months, "Bulan")
-        if y.jenis != "cpns":
-            y.mk_tahun = mk.years
-            y.mk_bulan = mk.months
-    
-        
-=======
-    range_golongan = GolonganHistoryModel.objects.filter(pengguna=pkt['partner']).order_by('-tanggal')
-    request.session['pegawai'] = pkt['partner']
-
-    for x in range_golongan:
-        tmt_cpns = get_object_or_404(GolonganHistoryModel, jenis = "cpns", pengguna=pkt['partner'])
-        #mk = relativedelta(x.tanggal, tmt_cpns.tanggal)
-        #print(mk.years, "Tahun", mk.months, "Bulan", x.nama)
-        #mk_total = relativedelta(datetime.datetime.now(), tmt_cpns.tanggal)
-        #print ("Total Masa Kerja", mk_total
-        if tmt_cpns.nama_id < 565 :
-            mk_cpns = relativedelta(tmt_cpns.tanggal, tmt_cpns.tanggal)
-            mk_capeg = (mk_cpns.years)+3
-            print(mk_capeg)
-            mk = relativedelta(x.tanggal, tmt_cpns.tanggal)
-            mk_all = (mk.years)+ mk_capeg
-            masa = mk.years-5
-            if masa < 1:
-                q = masa + 5
-                GolonganHistoryModel.objects.filter(pengguna=pkt['partner'], id = x.id).update(
-                    mk_tahun = q,
-                    mk_bulan = relativedelta(x.tanggal, tmt_cpns.tanggal).months
-                    )
-            else:
-                GolonganHistoryModel.objects.filter(pengguna=pkt['partner'], id = x.id).update(
-                    mk_tahun = relativedelta(x.tanggal, tmt_cpns.tanggal).years,
-                    mk_bulan = relativedelta(x.tanggal, tmt_cpns.tanggal).months
-                    )
-    # akun = PegawaiModel.objects.filter(id=id).update(
-    #     mk_tahun = mk_tahun.years,
-    #     mk_bulan =mk_tahun.months,
-    #     tmt_cpns=tmt_cpns.tanggal
-    #     )
-    # mk_tahun = mk_tahun.years,mk_bulan =mk_tahun.months, tmt_cpns=tmt_cpns.tanggal)
-    # if akun.exists():
-    #     (PegawaiModel.id=id).
-    #         mk_tahun = mk_tahun.years,
-    #         mk_bulan =mk_tahun.months
-    #     )
-
->>>>>>> 07c1ed949029e742a377262f916420ff6f4997ee
     return render(request, template_name, {'pegawai':pegawai, 'json_pangkat':json_pangkat, 'range_golongan':range_golongan})
-
-def RiwayatPangkatView(request,id):
-    request.session['username']
-    opdakses = request.session['opd_akses']
-    pegawai = get_object_or_404(PegawaiModel, id=id)
-    return render(request,'pegawai/riwayatpangkat.html')
-
     
-def RiwayatPangkatView(request,id):
+def RiwayatPangkatView(request, nip):
     request.session['username']
     opdakses = request.session['opd_akses']
-    pegawai = get_object_or_404(PegawaiModel, id=id)
-    list_pkt = GolonganHistoryModel.objects.filter(pengguna=pegawai.id)
-    print(list_pkt)
+    pangkat = GolonganHistoryModel.objects.filter(nip=nip).order_by('-tanggal')
+    pegawai = get_object_or_404(PegawaiModel,nip=nip)
+    return render (request,'pegawai/riwayatpangkat.html',{'object_list':pangkat, 'pegawai':pegawai})
+    
+
+def NominatifViews(request):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
+    pangkat = GolonganHistoryModel.objects.filter(jenis='cpns')
+    jumlah = len(pegawai)
+    #cari TMT_CPNS
+    tmtkgb_post = request.POST.get('tmtkgb')
+    for x in pegawai:
+        tahun = int(x.nip[8:12])
+        bulan = int(x.nip[12:14])
+        tanggal = 1
+        cpns = datetime.date(tahun,bulan,tanggal)
+        if request.POST:
+            tmtkgb_date = datetime.datetime.strptime(tmtkgb_post, '%Y-%m-%d').date()
+            nominasi = relativedelta(tmtkgb_date, x.tmt_cpns)
+            mk_tahun = nominasi.years
+            mk_bulan = nominasi.months
+            if nominasi.years %2 == 0 and nominasi.months == 0:    
+                pegnom = PegawaiModel.objects.filter(tmt_cpns= x.tmt_cpns)
+                return render(request, 'pegawai/daftarnominatif.html',{
+                    'object_list':pegnom, 
+                    'mk_tahun':mk_tahun, 
+                    'mk_bulan':mk_bulan, 
+                    'tmtkgb_date':tmtkgb_date
+                    })
+            else:
+                object_list = pegawai          
+    return render(request, 'pegawai/daftarnominatif.html')
 
 
+class Pegawai(ListView):
+    model = PegawaiModel
+    ordering = ['tmt_cpns']
+    template_name = 'pegawai/pegawaimodel_list.html'
+    paginate_by = 25
+    
+    def get_queryset(self):
+        self.request.session['username']
+        opdakses = self.request.session['opd_akses']
+        self.queryset = self.model.objects.filter(opd_id=opdakses)
+        if self.queryset is not None:
+            queryset = self.queryset
+            if isinstance(queryset, PegawaiModel):
+                queryset = self.queryset.all()
 
-    return render(request,'pegawai/riwayatpangkat.html',{'pegawai':pegawai, 'list_pkt':list_pkt})
-
-
-
-# @login_required
-# def UploadPegawai(request):
-#     request.session['username']
-#     opdakses = request.session['opd_akses']
-#     pegawai = urllib.request.urlopen('http://202.179.184.151/nip/?company='+ str(opdakses))
-#     list_pegawai = json.load(pegawai)
-#     opd = OpdModel.objects.all()
-#     for data in list_pegawai:
-#         PegawaiModel.objects.get_or_create(
-#             id=data['id'],
-#             nama=data['name'],
-#             #jabatan=data['jabatan_data'],
-#             nip=data['nip'],
-#             opd=data['company_id'],
-#             pangkat=data['golongan_id'],
-#             pengguna=data['user_id']
-#             )
-#         # AkunModel.objects.get_or_create(
-#         #     akun =data['user_id'],
-#         #     pegawai = data['id'],
-#         #     jenis_akun = 'pegawai'
-#         # ) 
-#     return render(request, 'pegawai/uploadperopd.html',context={'json_str':list_pegawai, 'opd':opd})
+        elif self.model is not None:
+            queryset = self.model._default_manager.all()
+        else:
+            raise ImproperlyConfigured(
+                "%(cls)s is missing a QuerySet. Define "
+                "%(cls)s.model, %(cls)s.queryset, or override "
+                "%(cls)s.get_queryset()." % {
+                    'cls': self.__class__.__name__
+                    }
+                )
+        ordering = self.get_ordering()
+        if ordering:
+            if isinstance(ordering, str):
+                ordering = (ordering,)
+            queryset = queryset.order_by(*ordering)
+        return queryset
+    
+def CariView(request):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    queryset = PegawaiModel.objects.filter(opd_id=opdakses)
+    cari = request.GET.get('search', '')    
+    if cari is not None and cari != '':
+        caripegawai = PegawaiModel.objects.filter(opd_id=opdakses, nama__icontains = cari )
+    else:
+        return redirect ('pegawai:pegawai')
+    return render(request, 'pegawai/caripegawai_list.html', {'object_list': caripegawai})

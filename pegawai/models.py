@@ -25,25 +25,21 @@ class GolonganModel(models.Model):
     nama = models.CharField(max_length=50)
     nilai = models.IntegerField()
     simbol =models.CharField(max_length=10, null=True)
+    grade =models.IntegerField(default=0,blank=True, null=True)
 
     def __str__(self):
         return self.nama
 
 class GolonganHistoryModel(models.Model):
     pengguna = models.IntegerField(null=True, blank=True)
-    nip = models.CharField(max_length=50, null=True, blank=True)
-    nama = models.ForeignKey('GolonganModel',models.DO_NOTHING, null=True,blank=True,default=24)
-    nomor_sk = models.CharField(max_length=150, null=True,blank=True, default="S-10225/BKD-2.2/")
+    nip = models.CharField(max_length=50, null=True, blank=True, verbose_name= 'NIP')
+    nama = models.ForeignKey(GolonganModel ,models.DO_NOTHING, null=True,blank=True,default=24, verbose_name='Nama Golongan')
+    nomor_sk = models.CharField(max_length=150, null=True,blank=True, default="S-10225/BKD-2.2/", verbose_name="Nomor SK")
     jenis = models.CharField(max_length=50, null=True, blank=True)
-    tanggal = models.DateField(default=2021-3-20, blank=True, null=True)
-    dokumen = models.FileField(upload_to='upload/skpangkat/', blank=True, null=True)
-<<<<<<< HEAD
+    tanggal = models.DateField(default=2021-3-20, blank=True, null=True, verbose_name="Tanggal")
+    dokumen = models.FileField(upload_to='upload/skpangkat/', blank=True, null=True, verbose_name="Dokumen")
     mk_tahun = models.IntegerField(null=True, default=0)
     mk_bulan = models.IntegerField(null=True, default=0)
-=======
-    mk_tahun = models.IntegerField(blank=True, null=True)
-    mk_bulan =  models.IntegerField(blank=True, null=True)
->>>>>>> 07c1ed949029e742a377262f916420ff6f4997ee
     
     class Meta:
         managed=True,
@@ -140,6 +136,3 @@ class ProsesBerkalaModel(models.Model):
     
     def __str__(self):
         return self.pegawai
-
-class DaftarNominatifModel(models.Model):
-    pass
