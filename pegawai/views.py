@@ -21,6 +21,7 @@ from django.http import Http404
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
 from .filter import FilterPegawai
+import os.path
 
 
 
