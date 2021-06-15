@@ -16,6 +16,7 @@ class PegawaiModel(models.Model):
     gaji_skrg = models.IntegerField(blank=True, null=True, default=0)
     tmt_cpns = models.DateField(default=datetime.datetime.now, null=True, blank=True)
     fhoto = models.ImageField(upload_to ='upload/fhoto/')
+    nominasi = models.BooleanField(default=False)
     
 
     def __str__(self):
@@ -130,9 +131,35 @@ class ProsesBerkalaModel(models.Model):
         ('tertunda', 'Tertunda'),
         ('proses', 'Proses'),
     )
-    pegawai = models.ForeignKey('PegawaiModel', models.DO_NOTHING, blank=True)
+    gaji = models.ForeignKey('GajiModel', models.DO_NOTHING, blank=True, null=True)
+    jabatan = models.ForeignKey('JabatanModel', models.DO_NOTHING, blank=True, null=True)
+    mk_tahun = models.IntegerField(blank=True, null=True)
+    mk_bulan = models.IntegerField(blank=True, null=True)
+    pegawai = models.ForeignKey('PegawaiModel', models.DO_NOTHING, blank=True, null=True)
     tanggal = models.DateTimeField(auto_now_add=timezone.now, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True)
+
+    def __str__(self):
+        return self.pegawai
+
+class NominatifxModels(models.Model):
+    bahanchoice = (
+        ('l','Lengkap'),
+        ('tl', 'Tidak Lengkap'),
+    )
+    golongan = models.ForeignKey('GolonganModel', models.DO_NOTHING, null=True, blank=True)
+    gaji = models.ForeignKey('GajiModel', models.DO_NOTHING, blank=True, null=True)
+    jabatan = models.ForeignKey('JabatanModel', models.DO_NOTHING, blank=True, null=True)
+    mk_tahun = models.IntegerField(blank=True, null=True)
+    mk_bulan = models.IntegerField(blank=True, null=True)
+    mkb_tahun = models.IntegerField(blank=True, null=True)
+    mkb_bulan = models.IntegerField(blank=True, null=True)
+    pegawai = models.ForeignKey('PegawaiModel', models.DO_NOTHING, blank=True)
+    tanggal = models.DateTimeField(auto_now_add=timezone.now, blank=True)
+    tmt_kgb = models.DateField(blank=True, null=True)
+    bahan = models.CharField(max_length=20, choices=bahanchoice, blank=True)
     
     def __str__(self):
         return self.pegawai
+
+

@@ -1,4 +1,8 @@
+from django.db.models.expressions import Value, ValueRange
+from django.db.models.query import ValuesListIterable
+from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.timezone import now
 from .forms import UserLoginForm
 from django.contrib.auth import (
     authenticate,
@@ -16,7 +20,7 @@ from . forms import *
 import datetime
 from dateutil.relativedelta import *
 from django.core.exceptions import MultipleObjectsReturned
-from itertools import zip_longest
+from itertools import count, zip_longest
 from django.http import Http404
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -106,36 +110,38 @@ def RiwayatPangkatView(request, nip):
     pegawai = get_object_or_404(PegawaiModel,nip=nip)
     return render (request,'pegawai/riwayatpangkat.html',{'object_list':pangkat, 'pegawai':pegawai})
     
-
-def NominatifViews(request):
-    request.session['username']
-    opdakses = request.session['opd_akses']
-    pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
-    pangkat = GolonganHistoryModel.objects.filter(jenis='cpns')
-    jumlah = len(pegawai)
-    #cari TMT_CPNS
-    tmtkgb_post = request.POST.get('tmtkgb')
-    for x in pegawai:
-        tahun = int(x.nip[8:12])
-        bulan = int(x.nip[12:14])
-        tanggal = 1
-        cpns = datetime.date(tahun,bulan,tanggal)
-        if request.POST:
-            tmtkgb_date = datetime.datetime.strptime(tmtkgb_post, '%Y-%m-%d').date()
-            nominasi = relativedelta(tmtkgb_date, x.tmt_cpns)
-            mk_tahun = nominasi.years
-            mk_bulan = nominasi.months
-            if nominasi.years %2 == 0 and nominasi.months == 0:    
-                pegnom = PegawaiModel.objects.filter(tmt_cpns= x.tmt_cpns)
-                return render(request, 'pegawai/daftarnominatif.html',{
-                    'object_list':pegnom, 
-                    'mk_tahun':mk_tahun, 
-                    'mk_bulan':mk_bulan, 
-                    'tmtkgb_date':tmtkgb_date
-                    })
-            else:
-                object_list = pegawai          
-    return render(request, 'pegawai/daftarnominatif.html')
+    
+# def NominatifViews(request):
+#     tmtkgb_post = request.POST.get('tmtkgb')
+#     request.session['tmtkgb'] = tmtkgb_post
+#     request.session['username']
+#     opdakses = request.session['opd_akses']
+#     pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
+#     pangkat = GolonganHistoryModel.objects.filter(jenis='cpns')
+#     jumlah = len(pegawai)
+#     #cari TMT_CPNS\
+#     for x in pegawai: 
+#         tahun = int(x.nip[8:12])
+#         bulan = int(x.nip[12:14])
+#         tanggal = 1
+#         cpns = datetime.date(tahun,bulan,tanggal) #tmt cpns
+#         if request.POST :
+#             tmtkgb_date = datetime.datetime.strptime(tmtkgb_post, '%Y-%m-%d').date()
+#             nominasi = relativedelta(tmtkgb_date, cpns)
+#             mk_tahun = nominasi.years
+#             mk_bulan = nominasi.months
+#             if mk_tahun %2 == 0 and mk_bulan == 0:
+                
+#                 pegnom = pegawai.filter(tmt_cpns = cpns)
+#                 return render(request, 'pegawai/daftarnominatif.html',{
+#                     'object_list':pegnom, 
+#                     'mk_tahun':mk_tahun, 
+#                     'mk_bulan':mk_bulan, 
+#                     'tmtkgb_date':tmtkgb_date
+#                     })
+#             else:
+#                 object_list = pegawai
+#     return render(request, 'pegawai/daftarnominatif.html')
 
 
 class Pegawai(ListView):
@@ -174,9 +180,78 @@ def CariView(request):
     request.session['username']
     opdakses = request.session['opd_akses']
     queryset = PegawaiModel.objects.filter(opd_id=opdakses)
-    cari = request.GET.get('search', '')    
+    cari = request.GET.get('search', '')   
     if cari is not None and cari != '':
         caripegawai = PegawaiModel.objects.filter(opd_id=opdakses, nama__icontains = cari )
     else:
         return redirect ('pegawai:pegawai')
     return render(request, 'pegawai/caripegawai_list.html', {'object_list': caripegawai})
+
+
+def ProsesBerkalaView(request, pengguna):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    x = request.session['tmtkgb']
+    pegawai = PegawaiModel.objects.filter(opd_id=opdakses)
+    data = get_object_or_404(PegawaiModel, pengguna=pengguna)
+    tmt_kgb = datetime.datetime.strptime(str(x), '%Y-%m-%d').date()
+    mk_baru = relativedelta(tmt_kgb,data.tmt_cpns)
+    cpnscek = GolonganHistoryModel.objects.filter(pengguna=data.id, jenis= 'cpns')
+    if cpnscek.exists():
+        golongan_cpns  = GolonganHistoryModel.objects.get(pengguna=data.id, jenis= 'cpns')
+        gaji = GajiModel.objects.get(golongan= data.golongan_id, masa_kerja = mk_baru.years)
+        mktahun_baru = mk_baru.years + 2
+        if golongan_cpns.nama_id <= 21:
+            mk_baru.years += -2
+            rentang = (mktahun_baru - mk_baru.years)-2
+            mktahun_baru = mk_baru.years + 2
+            print(mk_baru.years, mk_baru.months, mktahun_baru , mk_baru.months, data.golongan_id)
+            x = gaji.id + rentang
+            gajibaru = get_object_or_404(GajiModel, id = x)
+            print(gaji.tbgaji_currency, gaji.terbilang, gajibaru.tbgaji_currency, gajibaru.terbilang)
+            NominatifxModels.objects.get_or_create(golongan = data.golongan,gaji = gaji,jabatan = data.jabatan,mk_tahun = mk_baru.years,mk_bulan = mk_baru.months,mkb_tahun = mktahun_baru,mkb_bulan = mk_baru.months,pegawai = data,tmt_kgb = tmt_kgb)
+        elif golongan_cpns.nama_id >= 31:
+            mk_baru.years += -5
+            mktahun_baru = mk_baru.years + 2
+            print(mk_baru.years, mk_baru.months, mktahun_baru , mk_baru.months, data.golongan_id)
+            gaji = GajiModel.objects.get(golongan= data.golongan_id, masa_kerja = mk_baru.years)
+            rentang = mktahun_baru - mk_baru.years
+            x = gaji.id + rentang
+            gajibaru = get_object_or_404(GajiModel, id = x)
+            print(gaji.tbgaji_currency, gaji.terbilang, gajibaru.tbgaji_currency, gajibaru.terbilang)
+            NominatifxModels.objects.get_or_create(golongan = data.golongan,gaji = gaji,jabatan = data.jabatan,mk_tahun = mk_baru.years,mk_bulan = mk_baru.months,mkb_tahun = mktahun_baru,mkb_bulan = mk_baru.months,pegawai = data,tmt_kgb = tmt_kgb)
+        else:
+            rentang = mktahun_baru - mk_baru.years
+            x = gaji.id + rentang
+            gajibaru = get_object_or_404(GajiModel, id = x)
+            print(mk_baru.years, mk_baru.months, mktahun_baru, mk_baru.months, gaji.tbgaji_currency, gaji.terbilang, gajibaru.tbgaji_currency, gajibaru.terbilang)
+            NominatifxModels.objects.get_or_create(golongan = data.golongan,gaji = gaji,jabatan = data.jabatan,mk_tahun = mk_baru.years,mk_bulan = mk_baru.months,mkb_tahun = mktahun_baru,mkb_bulan = mk_baru.months,pegawai = data,tmt_kgb = tmt_kgb)
+    else:
+        return HttpResponse("Data CPNS tidak Ada")
+    return redirect('pegawai:nominatif')
+
+def NominatifViews(request):
+    tmtkgb_post = request.POST.get('tmtkgb',{})
+    request.session['tmtkgb'] = tmtkgb_post
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    pangkat = GolonganHistoryModel.objects.filter(jenis='cpns') 
+    #cari TMT_CPNS\
+    if request.method == 'POST':
+        pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
+        jumlah = len(pegawai)
+        for x in pegawai:
+            tahun = int(x.nip[8:12])
+            bulan = int(x.nip[12:14])
+            tanggal = 1
+            
+            cpns = datetime.date(tahun,bulan,tanggal)
+            tmtkgb_date = datetime.datetime.strptime(tmtkgb_post, '%Y-%m-%d').date()
+            nominasi = relativedelta(tmtkgb_date, cpns).years %2 == 0 and relativedelta(tmtkgb_date, cpns).months == 0
+            nom = pegawai.get(id =x.id)
+            nom.nominasi = nominasi
+            nom.tmt_cpns = cpns
+            nom.save()
+            data = pegawai.filter(nominasi=True)
+        return render(request, 'pegawai/daftarnominatif.html', {'data':data, 'tmtkgb_date':tmtkgb_date})
+    return render(request, 'pegawai/daftarnominatif.html')
