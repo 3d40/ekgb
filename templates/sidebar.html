@@ -4,11 +4,11 @@
             <li class="nav-title">Menu</li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a href="{% url 'pegawai:pegawai' %}" class="nav-link">
+                    <a href="{% url 'pegawai:index' %}" class="nav-link">
                      <i class="icon icon-screen-desktop"></i> Dashboard
                     </a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="icon icon-chart"></i> Riwayat KGB
                     </a>
@@ -17,12 +17,12 @@
                     <a href="#" class="nav-link">
                         <i class="icon icon-graph"></i> Riwayat Pangkat
                     </a>
-                </li>
+                </li> -->
             {% endif %}
 
             {%if user.is_authenticated and user.is_staff %}
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{% url 'pegawai:pegawai' %}" class="nav-link">
                         <i class="icon icon-people"></i> Data Pegawai
                     </a>
                 </li>
@@ -37,8 +37,15 @@
                     </a>
                     <ul class="nav-dropdown-items">
                         <li class="nav-item">
-                            <a href='#' class="nav-link">
-                                <i class="icon icon-share-alt"></i> Usulan Berkala
+                            <a href="{% url 'pegawai:nominatiflist' %}" class="nav-link">
+                                <i class="icon icon-share-alt"></i> Usulan Berkala Disetujui
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav-dropdown-items">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="icon icon-share-alt"></i> Usulan Berkala Ditunda
                             </a>
                         </li>
                     </ul>

@@ -147,6 +147,7 @@ class NominatifxModels(models.Model):
         ('l','Lengkap'),
         ('tl', 'Tidak Lengkap'),
     )
+    
     golongan = models.ForeignKey('GolonganModel', models.DO_NOTHING, null=True, blank=True)
     gaji = models.ForeignKey('GajiModel', models.DO_NOTHING, blank=True, null=True)
     jabatan = models.ForeignKey('JabatanModel', models.DO_NOTHING, blank=True, null=True)
@@ -155,6 +156,7 @@ class NominatifxModels(models.Model):
     mkb_tahun = models.IntegerField(blank=True, null=True)
     mkb_bulan = models.IntegerField(blank=True, null=True)
     pegawai = models.ForeignKey('PegawaiModel', models.DO_NOTHING, blank=True)
+    opd = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
     tanggal = models.DateTimeField(auto_now_add=timezone.now, blank=True)
     tmt_kgb = models.DateField(blank=True, null=True)
     bahan = models.CharField(max_length=20, choices=bahanchoice, blank=True)
