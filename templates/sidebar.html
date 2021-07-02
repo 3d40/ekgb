@@ -28,7 +28,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'pegawai:nominatif' %}" class="nav-link">
-                        <i class="icon icon-user-following"></i> Daftar Nominatif
+                        <i class="icon icon-user-following"></i> Buat Daftar Nominatif
                     </a>
                 </li>
                 <li class="nav-item nav-dropdown">
@@ -38,7 +38,21 @@
                     <ul class="nav-dropdown-items">
                         <li class="nav-item">
                             <a href="{% url 'pegawai:nominatiflist' %}" class="nav-link">
-                                <i class="icon icon-share-alt"></i> Usulan Berkala Disetujui
+                                <i class="icon icon-share-alt"></i> Usulan Disetujui
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav-dropdown-items">
+                        <li class="nav-item">
+                            <a href="{% url 'pegawai:berkalalist' %}" class="nav-link">
+                                <i class="icon icon-share-alt"></i> Usulan Dalam Proses
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav-dropdown-items">
+                        <li class="nav-item">
+                            <a href="{% url 'pegawai:selesai' %}" class="nav-link">
+                                <i class="icon icon-share-alt"></i> Berkala Selesai
                             </a>
                         </li>
                     </ul>

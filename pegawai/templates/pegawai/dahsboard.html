@@ -21,7 +21,7 @@
                     </a>
                 </div>
                 <div class="h2 text-muted">
-                    <a href="<% %>">
+                    <a href="{% url 'pegawai:pegawai' %}">
                         <i class="fas fa-users"></i>
                     </a>
                 </div>
@@ -39,7 +39,7 @@
                     </a>
                 </div>
                 <div class="h2 text-muted">
-                    <a href="<% %>">
+                    <a href="{% url 'pegawai:nominatiflist' %}">
                         <i class="fas fa-file"></i>
                     </a>
                 </div>
@@ -51,13 +51,13 @@
         <div class="card p-4">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <a href="<% %>">
-                        <span class="h4 d-block font-weight-normal mb-2">25</span>
+                    <a href="{% url 'pegawai:berkalalist' %}">
+                        <span class="h4 d-block font-weight-normal mb-2">{{proses}}</span>
                         <span class="font-weight-light">Jumlah Yang Diproses</span>
                     </a>
                 </div>
                 <div class="h2 text-muted">
-                    <a href="<% %>">
+                    <a href="{% url 'pegawai:berkalalist' %}">
                         <i class="fas fa-spinner"></i>
                     </a>
                 </div>
@@ -69,8 +69,8 @@
         <div class="card p-4">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <a href="<?php echo site_url('nominatif-tertunda'); ?>">
-                        <span class="h4 d-block font-weight-normal mb-2">5</span>
+                    <a href="{% url 'pegawai:selesai' %}">
+                        <span class="h4 d-block font-weight-normal mb-2">{{selesai}}</span>
                         <span class="font-weight-light">Jumlan Yang Selesai Proses</span>
                     </a>
                 </div>
@@ -94,7 +94,7 @@
                 </div>
 
                 <div class="h2 text-muted">
-                    <a href="<?php echo site_url('nominatif-tertunda'); ?>">
+                    <a href="<?php echo site_urlnominatiflist('nominatif-tertunda'); ?>">
                         <i class="fas fa-times-circle"></i>
                     </a>
                 </div>

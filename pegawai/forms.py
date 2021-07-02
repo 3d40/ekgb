@@ -26,3 +26,13 @@ class GolonganHistoryForm(forms.ModelForm):
         models = GolonganHistoryModel
         fields = ['nama','nomor_sk','tanggal','mk_tahun','mk_bulan']
     
+
+class NominatifForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(NominatifForm, self).__init__(*args, **kwargs)
+        self.fields['pegawai'].disabled = True,
+        self.fields['opd'].disabled = True
+    
+    class Meta:
+        model = NominatifxModels
+        fields = '__all__'

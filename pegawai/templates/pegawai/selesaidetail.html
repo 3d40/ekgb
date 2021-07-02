@@ -4,8 +4,7 @@
 <div class="col-md-12">
     <div class="card">
         <div class="card-header bg-light">
-            <h3>{{data.nama}}</h3>
-            <h6>{{data.nip}}</h6>
+            {{data.nama}} {{data.nip}}
         </div>
         <div class="card-body">
             <form class="row" id="tambah-nominatif-form" method="post" action="">
@@ -40,15 +39,11 @@
                 </div>
                 <div class="col-md-5">
                     <div class="form-group">
-                        <label for="tmtpns" class="form-control-label">TMT KGB  :</label>
-                        <input id="tmtpns" name="skpd" class="form-control" value="{{nom.tmt_kgb}}" readonly />
-                    </div>
-                    <div class="form-group">
                         <label for="tmtpns" class="form-control-label">Besaran Gaji  :</label>
                         <input id="tmtpns" name="skpd" class="form-control" value="{{gaji.tbgaji_currency}} ( {{gaji.terbilang}} )" readonly />
                     </div>
                     <td>
-                        <a class="btn btn-sm btn-info"href="{%url 'pegawai:prosesdetail' data.id %}">Proses</a>
+                        <a class="btn btn-sm btn-info"href="{%url 'pegawai:cetakselesai' data.id %}">Cetak</a>
                       </td>
                 </div>
                 <div class="col-md-12">

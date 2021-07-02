@@ -50,54 +50,25 @@
                     </div>
                     <div class="form-group">
                         <label for="jnsklmn" class="form-control-label">Jenis Kelamin :</label>
-                        <input id="jnsklmn" name="skpd" class="form-control" value="{{ i.jenis_kelamin }}" readonly />
+                        <input id="jnsklmn" name="skpd" class="form-control" value="{{ pegawai.jenis_kelamin }}" readonly />
                     </div>  
                     <div class="form-group">
                         <label for="tmtpns" class="form-control-label">TMT CPNS :</label>
                         <input id="tmtpns" name="skpd" class="form-control" value="{{ pegawai.tmt_cpns}}" readonly />
                     </div>
+                    <div>
+                    <td>
+                    <a class="btn btn-sm btn-info"href="{% url 'pegawai:update' pegawai.id %}">Update Data Pegawai</a>
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-info"href="{% url 'pegawai:riwayatpangkat' pegawai.nip %}">Riwayat Pangkat</a>
+                    </td>
+                    </div>
                 </div>
                 <div class="col-md-12">
-                    <hr>
-                </div>
+                </div>  
             </form>
         </div>
     </div>
 </div>
-
-<!-- <div class="col-md-12">
-    <div class="card-header bg-light">
-        Riwayat Pangkat
-        <hr>
-        Nama : {{pegawai.nama}}        <br>
-        NIP  : {{pegawai.nip}}
-    </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="myTable" class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Jenis Kenaikan Pangkat</th>
-                        <th>Golongan</th>
-                        <th>Nomor SK</th>
-                        <th>Tanggal</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {% for pangkat in range_golongan %}
-                        <tr>
-                            <td>{{forloop.counter}}</td>
-                            <td>{{pangkat.jenis}}</td>
-                            <td>{{pangkat.nama}}</td>
-                            <td>S-10225/BKD-2.2/III/2012</td>
-                            <td>{{pangkat.tanggal}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div> -->
 {% endblock %}

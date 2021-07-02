@@ -2,16 +2,13 @@
 {% block content %}
 
 <!-- search -->
-<div class="form-group">
+<!-- <div class="form-group">
   <form action="{% url 'pegawai:nominatif'  %}" method="POST">
     {% csrf_token %}
     <input type="date" name ="tmtkgb" value="{{tmtkgb_date}}" >
     <button class="btn">Cari</button>
-
-    <a href="{% url 'pegawai:listnominatifmanual'  %}" class="btn btn-primary btn-lg inactive" role="button" aria-pressed="false">Nominatif Manual</a>
   </form>
-  
-</div>
+</div> -->
 
 <table class="table" >
     <thead class="thead-dark" >
@@ -33,10 +30,10 @@
     </thead>
     <tbody>
       
-        {% for x in data %}
+        {% for x in object_list %}
         <th scope="row" >{{forloop.counter}}</th>
-        <td><a href="{% url 'pegawai:detail' x.id %}">{{x.nip}}</a></td>
-        <td><a href="{% url 'pegawai:detail' x.id %}">{{x.nama}}</a></td>
+        <td><a href="{% url 'pegawai:detail' x.pegawai_id %}">{{x.pegawai}}</a></td>
+        <td><a href="{% url 'pegawai:detail' x.pegawai_id %}">{{x.pegawai}}</a></td>
         <td>{{x.opd}}</a></td>
         <td>{{tmtkgb_date}}</td>
         <td>
@@ -58,7 +55,7 @@
           </div>
         </td>
         <td>
-          <a class="btn btn-sm btn-info"href="{% url 'pegawai:prosesnominatif' x.id %}">Daftarkan</a>
+          <a class="btn btn-sm btn-info"href="{%url 'pegawai:prosesdetail' x.pegawai_id %}">Detail</a>
         </td>
       </tr>
         {% endfor %}

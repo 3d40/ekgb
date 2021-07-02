@@ -17,8 +17,9 @@
                         <th>No</th>
                         <th>Jenis Kenaikan Pangkat</th>
                         <th>Jenjang Golongan</th>
-                        <th>Tanggal</th>
+                        <th>Terhitung Mulai Tanggal</th>
                         <th>Masa Kerja</th>
+                        <th>Aksi</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -29,6 +30,7 @@
                             <td>{{pangkat.nama}}</td>
                             <td>{{pangkat.tanggal}}</td>
                             <td>{{pangkat.mk_tahun}} Tahun {{pangkat.mk_bulan}} Bulan</td>
+                            <td><a class="btn btn-sm btn-info" href="{% url 'pegawai:pangkat' pangkat.id %}">Hitung Masa Kerja</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>

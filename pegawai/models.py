@@ -18,15 +18,18 @@ class PegawaiModel(models.Model):
     fhoto = models.ImageField(upload_to ='upload/fhoto/')
     nominasi = models.BooleanField(default=False)
     
-
     def __str__(self):
         return self.nama
+
 
 class GolonganModel(models.Model):
     nama = models.CharField(max_length=50)
     nilai = models.IntegerField()
     simbol =models.CharField(max_length=10, null=True)
     grade =models.IntegerField(default=0,blank=True, null=True)
+
+    class Meta:
+        managed = True
 
     def __str__(self):
         return self.nama
@@ -41,6 +44,7 @@ class GolonganHistoryModel(models.Model):
     dokumen = models.FileField(upload_to='upload/skpangkat/', blank=True, null=True, verbose_name="Dokumen")
     mk_tahun = models.IntegerField(null=True, default=0)
     mk_bulan = models.IntegerField(null=True, default=0)
+    dasarnominatif = models.BooleanField(null=True, default=False)
     
     class Meta:
         managed=True,
@@ -130,14 +134,20 @@ class ProsesBerkalaModel(models.Model):
         ('selesai','Selesai'),
         ('tertunda', 'Tertunda'),
         ('proses', 'Proses'),
+        ('nominatif', 'Nominatif'),
     )
+    golongan = models.ForeignKey('GolonganModel', models.DO_NOTHING, null=True, blank=True)
     gaji = models.ForeignKey('GajiModel', models.DO_NOTHING, blank=True, null=True)
     jabatan = models.ForeignKey('JabatanModel', models.DO_NOTHING, blank=True, null=True)
     mk_tahun = models.IntegerField(blank=True, null=True)
     mk_bulan = models.IntegerField(blank=True, null=True)
+    mkb_tahun = models.IntegerField(blank=True, null=True)
+    mkb_bulan = models.IntegerField(blank=True, null=True)
     pegawai = models.ForeignKey('PegawaiModel', models.DO_NOTHING, blank=True, null=True)
+    opd = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
     tanggal = models.DateTimeField(auto_now_add=timezone.now, blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True)
+    tmt_kgb = models.DateField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True, default='nominatif')
 
     def __str__(self):
         return self.pegawai
@@ -163,5 +173,23 @@ class NominatifxModels(models.Model):
     
     def __str__(self):
         return self.pegawai
+
+
+class NominatifSelesaiModels(models.Model):    
+    golongan = models.ForeignKey('GolonganModel', models.DO_NOTHING, null=True, blank=True)
+    gaji = models.ForeignKey('GajiModel', models.DO_NOTHING, blank=True, null=True)
+    jabatan = models.ForeignKey('JabatanModel', models.DO_NOTHING, blank=True, null=True)
+    mk_tahun = models.IntegerField(blank=True, null=True)
+    mk_bulan = models.IntegerField(blank=True, null=True)
+    mkb_tahun = models.IntegerField(blank=True, null=True)
+    mkb_bulan = models.IntegerField(blank=True, null=True)
+    pegawai = models.ForeignKey('PegawaiModel', models.DO_NOTHING, blank=True)
+    opd = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
+    tanggal = models.DateTimeField(auto_now_add=timezone.now, blank=True)
+    tmt_kgb = models.DateField(blank=True, null=True)
+    
+    def __str__(self):
+        return self.pegawai
+
 
 
