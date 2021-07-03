@@ -8,7 +8,7 @@
             <h6>{{data.nip}}</h6>
         </div>
         <div class="card-body">
-            <form class="row" id="tambah-nominatif-form" method="post" action="">
+            <form class="row" method="POST" action="">
                 <div class="col-md-3">
                     <div class="form-group">
                         <label class="form-control-label">Dinas Instansi</label>
@@ -35,7 +35,7 @@
             
                     <div class="form-group">
                         <label for="jnsklmn" class="form-control-label">Masa Kerja Baru :</label>
-                        <input id="jnsklmn" name="skpd" class="form-control" value="{{nom.mkb_tahun}} Tahun {{nom.mkb_bulan}} Bulan"  readonly />
+                        <input id="jnsklmn" name="skpd" class="form-control" value="{{nom.mkb_tahun}} Tahun {{nom.mkb_bulan}} Bulan" " readonly />
                     </div> 
                 </div>
                 <div class="col-md-5">
@@ -47,9 +47,9 @@
                         <label for="tmtpns" class="form-control-label">Besaran Gaji  :</label>
                         <input id="tmtpns" name="skpd" class="form-control" value="{{gaji.tbgaji_currency}} ( {{gaji.terbilang}} )" readonly />
                     </div>
-                    <td>
-                        <a class="btn btn-sm btn-info"href="#">Proses</a>
-                      </td>
+                        <td>
+                            <a type="submit" class="btn btn-sm btn-info" href ="{% url 'pegawai:cetakpdf' data.id %}">Cetak</a>
+                        </td>
                 </div>
                 <div class="col-md-12">
                     <hr>
@@ -59,6 +59,5 @@
     </div>
 </div>
 {% endif %}
-
 
 {% endblock %}

@@ -8,7 +8,8 @@
             <h6>{{data.nip}}</h6>
         </div>
         <div class="card-body">
-            <form class="row" id="tambah-nominatif-form" method="post" action="">
+            <form class="row" method="POST" action="" role="form">
+                {% csrf_token %}
                 <div class="col-md-3">
                     <div class="form-group">
                         <label class="form-control-label">Dinas Instansi</label>
@@ -47,18 +48,18 @@
                         <label for="tmtpns" class="form-control-label">Besaran Gaji  :</label>
                         <input id="tmtpns" name="skpd" class="form-control" value="{{gaji.tbgaji_currency}} ( {{gaji.terbilang}} )" readonly />
                     </div>
-                    <td>
-                        <a class="btn btn-sm btn-info"href="{%url 'pegawai:prosesdetail' data.id %}">Proses</a>
-                      </td>
+                        <a type="submit" class="btn btn-sm btn-info" href="{% url 'pegawai:prosesdetailpost' data.id %}">Proses</a>
                 </div>
                 <div class="col-md-12">
                     <hr>
+                        <li color = "red">Apakah Data Sudah Benar...???</li>
+                   
                 </div>
+                
             </form>
         </div>
     </div>
 </div>
-{% endif %}
-
+{% endif%}
 
 {% endblock %}

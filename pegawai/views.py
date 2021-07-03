@@ -1,4 +1,3 @@
-
 from django.db.models import query
 from django.db.models.expressions import Value, ValueRange
 from django.db.models.query import QuerySet, ValuesListIterable
@@ -31,7 +30,7 @@ from django.views.generic.detail import SingleObjectMixin
 from .filter import FilterPegawai
 import os.path
 from xhtml2pdf import pisa
-
+from django.template.loader import get_template
 # Create your views here.
 
 urlpegawai = 'http://202.179.184.151:8000/nip/?search='
@@ -226,7 +225,7 @@ def CetakPdfFile(request, id):
     pegawai = get_object_or_404(PegawaiModel, id=id)
     pangkat = get_object_or_404(GolonganHistoryModel, nama_id=pegawai.golongan, pengguna=pegawai.id)
     simbol = get_object_or_404(GolonganModel, id=pegawai.golongan_id)
-    nominatif = get_object_or_404(NominatifxModels, pegawai_id=pegawai.id)
+    nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=pegawai.id)
     gajibaru = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
     gajilama = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mk_tahun)
     opd = get_object_or_404(OpdModel, id=pegawai.opd_id)
@@ -244,7 +243,6 @@ def CetakPdfFile(request, id):
         tmt_kgb=nominatif.tmt_kgb,
     )
     nominatif.delete()
-    print(inputselesai.id)
     # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
     context = {
         'nominatif': nominatif, 
@@ -453,7 +451,7 @@ def ProsesManualNominatif(request, id):
     gol = get_object_or_404(GolonganModel, id=pegawai.golongan_id)
     golajuan = GolonganHistoryModel.objects.filter(pengguna=pegawai.id).order_by('-tanggal').first()
     gaji = get_object_or_404(GajiModel, masa_kerja=golajuan.mk_tahun, golongan_id=gol.id)
-    print(pegawai.nama, gol.id, golajuan.mk_tahun)
+    
     context = {
         'pegawai': pegawai,
         'golongan': gol,
@@ -608,7 +606,8 @@ def CetakSelesai(request, id):
     pisa_status = pisa.CreatePDF(html, dest=response)
     # if error then show some funy view
     if pisa_status.err:
-        return HttpResponse(pisa_status)
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return HttpResponse(pisa_status)
 
 
 def ProsesDetail(request, id):
@@ -617,10 +616,29 @@ def ProsesDetail(request, id):
     data = get_object_or_404(PegawaiModel, id=id)
     gol = get_object_or_404(GolonganModel, id =data.golongan_id)
     pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
-    nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
+    nominatif = get_object_or_404(NominatifxModels, pegawai_id=data.id)
     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
     return render(request, "pegawai/detailnominatif.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
 
+def ProsesDetailPost(request, id):
+    data = get_object_or_404(PegawaiModel, id = id)
+    nominatif = get_object_or_404(NominatifxModels, pegawai_id = data.id)
+    print(data.id)
+    inputproses = ProsesBerkalaModel.objects.get_or_create(
+        golongan_id=nominatif.golongan_id,
+        gaji_id=nominatif.gaji_id,
+        jabatan=nominatif.jabatan,
+        mk_tahun=nominatif.mk_tahun,
+        mk_bulan=nominatif.mk_bulan,
+        mkb_tahun=nominatif.mkb_tahun,
+        mkb_bulan=nominatif.mkb_bulan,
+        pegawai_id=nominatif.pegawai_id,
+        opd_id=nominatif.opd_id,
+        tmt_kgb=nominatif.tmt_kgb
+        )
+    nominatif.delete()
+    return redirect('pegawai:selesaidetail',data.id)
+        
 
 class NominatifManuallist(ListView):
     model = PegawaiModel
@@ -657,7 +675,7 @@ class NominatifManuallist(ListView):
 class ProsesBerkalaList(ListView):
     model = ProsesBerkalaModel
     ordering = ['tmt_kgb']
-    template_name = "berkalaproses_list.html"
+    template_name = "prosesberkalamodel_list.html"
 
     def get_queryset(self):
         self.request.session['username']
@@ -666,3 +684,14 @@ class ProsesBerkalaList(ListView):
         for data in queryset:
             print(data.pegawai)
         return queryset
+
+
+def SelesaiDetail(request, id):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    data = get_object_or_404(PegawaiModel, id=id)
+    gol = get_object_or_404(GolonganModel, id =data.golongan_id)
+    pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
+    nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
+    gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
+    return render(request, "pegawai/selesainominatif.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
