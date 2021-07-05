@@ -242,6 +242,16 @@ def CetakPdfFile(request, id):
         opd_id=nominatif.opd_id,
         tmt_kgb=nominatif.tmt_kgb,
     )
+    inputhistory = GolonganHistoryModel.objects.get_or_create(
+        pengguna = pegawai.id,
+        nip = pegawai.nip,
+        nama_id = pegawai.golongan_id,
+        jenis = "sk_kgb",
+        tanggal = nominatif.tmt_kgb,
+        mk_tahun = nominatif.mkb_tahun,
+        mk_bulan = nominatif.mkb_bulan,
+        tglpenetapan = nominatif.tanggal
+    )
     nominatif.delete()
     # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
     context = {

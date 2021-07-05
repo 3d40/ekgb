@@ -45,6 +45,7 @@ class GolonganHistoryModel(models.Model):
     mk_tahun = models.IntegerField(null=True, default=0)
     mk_bulan = models.IntegerField(null=True, default=0)
     dasarnominatif = models.BooleanField(null=True, default=False)
+    tglpenetapan = models.DateTimeField(null=True, blank=True, verbose_name="penetapan")
     
     class Meta:
         managed=True,
