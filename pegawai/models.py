@@ -5,6 +5,10 @@ from django.utils import timezone
 
 # Create your models here.
 class PegawaiModel(models.Model):
+    KELAMIN_CHOICE = [
+        ('L', 'Laki-laki'),
+        ('P', 'Perempuan')
+    ]
     nama = models.CharField(max_length=100)
     jabatan = models.ForeignKey('JabatanModel', models.DO_NOTHING, blank=True, null=True)
     nip = models.CharField(max_length=100, null=True)
@@ -17,7 +21,13 @@ class PegawaiModel(models.Model):
     tmt_cpns = models.DateField(default=datetime.datetime.now, null=True, blank=True)
     fhoto = models.ImageField(upload_to ='upload/fhoto/')
     nominasi = models.BooleanField(default=False)
-    
+    jenis_kelamin = models.CharField(max_length=30, choices=KELAMIN_CHOICE, blank=True, null=True)
+    tempat_lahir = models.CharField(max_length=100, blank=True, null=True)
+    jabatan_data = models.CharField(max_length=100, blank=True, null=True)
+    jenis_jabatan =  models.CharField(max_length=100, blank=True, null=True)
+    pddk_terakhir = models.CharField(max_length=100, blank=True, null=True)
+    tmt_pns = models.DateField(default=datetime.datetime.now, null=True, blank=True)
+
     def __str__(self):
         return self.nama
 

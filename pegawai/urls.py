@@ -22,6 +22,7 @@ urlpatterns = [
     path('pegawai/daftarnominatif/selesai/', views.SelesaiList.as_view(), name='selesai'),
     path('pegawai/daftarnominatif/selesai/detail/<int:id>', views.SelesaiDetail, name='selesaidetail'),
     
+    
     path('pegawai/daftarnominatif/manual', views.NominatifManuallist.as_view(), name='listnominatifmanual'),
     path('pegawai/daftarnominatif/manual/cari', views.CariManualNominatif, name='carinominatifmanual'),
     
@@ -33,6 +34,8 @@ urlpatterns = [
     path('pegawai/prosesberkala/detail/post/<int:id>', views.ProsesDetailPost, name='prosesdetailpost'), #delete di Nominatifxmodel, input ke ProsesBerkalaModel
     
     
+    path('pegawai/cetak/detail/<int:id>',views.CetakDetail, name='detailcetak'),
+    path('pegawai/cetak/detail/cetakberkala/<int:id>',views.CetakBerkala, name='CetakBerkala'),
     path('pegawai/cetak/<int:id>',views.CetakPdfFile, name='cetakpdf'),
     path('pegawai/cetakselesai/<int:id>',views.CetakSelesai, name='cetakselesai'),
     path('pangkat/<int:id>', views.Hitungmasakerja, name='pangkat'),

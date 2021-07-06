@@ -212,7 +212,8 @@ def NominatifDetailView(request, id):
     data = get_object_or_404(PegawaiModel, id=id)
     gol = get_object_or_404(GolonganModel, id =data.golongan_id)
     print(data.nama, data.golongan_id)
-    pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
+    pangkat = GolonganHistoryModel.objects.filter(pengguna=data.id, nama=data.golongan).first()
+    # pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
     nominatif = get_object_or_404(NominatifxModels, pegawai_id=data.id)
     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
     return render(request, "pegawai/detailnominatif.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
@@ -223,14 +224,14 @@ def CetakPdfFile(request, id):
     opdakses = request.session['opd_akses']
     template_path = 'pegawai/cetakpdf.html'
     pegawai = get_object_or_404(PegawaiModel, id=id)
-    pangkat = get_object_or_404(GolonganHistoryModel, nama_id=pegawai.golongan, pengguna=pegawai.id)
+    pangkat = GolonganHistoryModel.objects.filter( nama_id=pegawai.golongan, pengguna=pegawai.id).first()
     simbol = get_object_or_404(GolonganModel, id=pegawai.golongan_id)
     nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=pegawai.id)
     gajibaru = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
     gajilama = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mk_tahun)
     opd = get_object_or_404(OpdModel, id=pegawai.opd_id)
     kgbnext = nominatif.tmt_kgb+relativedelta(years=+2)
-    inputselesai = NominatifSelesaiModels.objects.get_or_create(
+    inputselesai = NominatifSelesaiModels.objects.update_or_create(
         golongan_id=nominatif.golongan_id,
         gaji_id=nominatif.gaji_id,
         jabatan=nominatif.jabatan,
@@ -530,11 +531,15 @@ def LoadPegawaiView(request, id=None):
             pengguna=pegawai['user_id'],
             golongan_id=pegawai['golongan_id'],
             opd_id=pegawai['company_id'],
+            jenis_kelamin=pegawai['jenis_kelamin'],
+            tempat_lahir = pegawai['tempat_lahir'],
+            jabatan_data = pegawai['jabatan_data'],
+            jenis_jabatan = pegawai['jenis_jabatan'],
+            pddk_terakhir = pegawai['Level_Pendidikan'],
+            tmt_pns = pegawai['tmt_pns'],
         )
         cekdata = PegawaiModel.objects.exclude(
             nip__isnull=False).exclude(nip__exact="").delete()
-        print(cekdata)
-
     return redirect('pegawai:pegawai')
 
 
@@ -542,11 +547,10 @@ def UpdateDataPegawai(request, id):
     pegawai = get_object_or_404(PegawaiModel, id=id)
     openjson = urllib.request.urlopen(urlpegawai + str(pegawai.nip))
     data = json.load(openjson)
+    print(data)
     for x in data:
-        pegawai.update(
-            golongan_id=x['golongan_id'],
-            opd_id=x['company_id']
-            )
+        pegawai.golongan_id=x['golongan_id']
+        pegawai.opd_id=x['company_id']
         pegawai.save()
     return redirect('pegawai:detail', pegawai.id)
 
@@ -565,15 +569,15 @@ class SelesaiList(ListView):
         return queryset
 
 
-def SelesaiDetailView(request, id):
-    request.session['username']
-    opdakses = request.session['opd_akses']
-    data = get_object_or_404(PegawaiModel, id=id)
-    gol = get_object_or_404(GolonganModel, id =data.golongan_id)
-    pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama_id=gol.id)
-    nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
-    gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
-    return render(request, "pegawai/detailproses.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
+# def SelesaiDetailView(request, id):
+#     request.session['username']
+#     opdakses = request.session['opd_akses']
+#     data = get_object_or_404(PegawaiModel, id=id)
+#     gol = get_object_or_404(GolonganModel, id =data.golongan_id)
+#     pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama_id=gol.id)
+#     nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
+#     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
+#     return render(request, "pegawai/detailproses.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
 
 
 
@@ -582,7 +586,8 @@ def CetakSelesai(request, id):
     opdakses = request.session['opd_akses']
     template_path = 'pegawai/cetakpdf.html'
     pegawai = get_object_or_404(PegawaiModel, id=id)
-    pangkat = get_object_or_404(GolonganHistoryModel, nama_id=pegawai.golongan, pengguna=pegawai.id)
+    pangkat = GolonganHistoryModel.objects.filter(nama_id=pegawai.golongan, pengguna=pegawai.id).first()
+    # pangkat = get_object_or_404(GolonganHistoryModel, nama_id=pegawai.golongan, pengguna=pegawai.id)
     simbol = get_object_or_404(GolonganModel, id=pegawai.golongan_id)
     nominatif = get_object_or_404(NominatifSelesaiModels, pegawai_id=pegawai.id)
     gajibaru = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
@@ -625,8 +630,9 @@ def ProsesDetail(request, id):
     opdakses = request.session['opd_akses']
     data = get_object_or_404(PegawaiModel, id=id)
     gol = get_object_or_404(GolonganModel, id =data.golongan_id)
-    pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
-    nominatif = get_object_or_404(NominatifxModels, pegawai_id=data.id)
+    pangkat = GolonganHistoryModel.objects.filter(pengguna=data.id, nama=data.golongan).first()
+    # pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
+    nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
     return render(request, "pegawai/detailnominatif.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
 
@@ -647,7 +653,7 @@ def ProsesDetailPost(request, id):
         tmt_kgb=nominatif.tmt_kgb
         )
     nominatif.delete()
-    return redirect('pegawai:selesaidetail',data.id)
+    return redirect('pegawai:nominatiflist')
         
 
 class NominatifManuallist(ListView):
@@ -701,7 +707,51 @@ def SelesaiDetail(request, id):
     opdakses = request.session['opd_akses']
     data = get_object_or_404(PegawaiModel, id=id)
     gol = get_object_or_404(GolonganModel, id =data.golongan_id)
-    pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
+    pangkat = GolonganHistoryModel.objects.filter(pengguna=data.id, nama=data.golongan).first()
+    print(pangkat)
+    # pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
     nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
     return render(request, "pegawai/selesainominatif.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
+
+def CetakDetail(request, id):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    data = get_object_or_404(PegawaiModel, id=id)
+    gol = get_object_or_404(GolonganModel, id =data.golongan_id)
+    pangkat = GolonganHistoryModel.objects.filter(pengguna=data.id, nama=data.golongan).first()
+    print(pangkat)
+    # pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
+    nominatif = get_object_or_404(NominatifSelesaiModels, pegawai_id=data.id)
+    gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
+    return render(request, "pegawai/selesaidetail.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
+
+def CetakBerkala(request, id):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    template_path = 'pegawai/cetakpdf.html'
+    pegawai = get_object_or_404(PegawaiModel, id=id)
+    pangkat = GolonganHistoryModel.objects.filter( nama_id=pegawai.golongan, pengguna=pegawai.id).first()
+    simbol = get_object_or_404(GolonganModel, id=pegawai.golongan_id)
+    nominatif = get_object_or_404(NominatifSelesaiModels, pegawai_id=pegawai.id)
+    gajibaru = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
+    gajilama = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mk_tahun)
+    opd = get_object_or_404(OpdModel, id=pegawai.opd_id)
+    kgbnext = nominatif.tmt_kgb+relativedelta(years=+2)
+    # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
+    context = {
+        'nominatif': nominatif, 
+        'data': pegawai, 
+        'pangkat': pangkat,
+        'gajibaru': gajibaru, 
+        'gajilama': gajilama, 
+        'kgbnext': kgbnext, 
+        'simbol': simbol}
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="report.pdf"'
+    template = get_template(template_path)
+    html = template.render(context)
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
