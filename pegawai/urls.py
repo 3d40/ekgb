@@ -12,6 +12,9 @@ urlpatterns = [
     path('pegawai/cari', views.CariView, name = 'cari'),
     path('pegawai/detail/<int:id>', views.HitungPangkatView, name='detail'),
     path('pegawai/detail/update/<int:id>', views.UpdateDataPegawai, name='update'),  
+
+    path('pegawai/pangkat/<int:id>', views.PangkatDetail, name='detailpangkat'),  
+
     
     path('pegawai/daftarnominatif', views.NominatifViews, name='nominatif'),
     path('pegawai/daftarnominatif/list', views.NominatifList.as_view(), name='nominatiflist'),
@@ -38,6 +41,8 @@ urlpatterns = [
     path('pegawai/cetak/detail/cetakberkala/<int:id>',views.CetakBerkala, name='CetakBerkala'),
     path('pegawai/cetak/<int:id>',views.CetakPdfFile, name='cetakpdf'),
     path('pegawai/cetakselesai/<int:id>',views.CetakSelesai, name='cetakselesai'),
+    
+    
     path('pangkat/<int:id>', views.Hitungmasakerja, name='pangkat'),
     path('pegawai/opdlist/', views.OpdListView.as_view(), name='opd'),
     path('pegawai/opdlist/<int:id>', views.LoadPegawaiView, name='loadpegawai')

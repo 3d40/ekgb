@@ -107,7 +107,8 @@ def HitungPangkatView(request, id):
             pengguna=pkt['partner'], 
             nama_id=pkt['golongan_id_history'], 
             nip=pegawai.nip, jenis=pkt['jenis'], 
-            tanggal=pkt['date'])
+            tanggal=pkt['date'],
+            nomor_sk = pkt['name']),
     return render(request, template_name,context)
 
 
@@ -589,7 +590,7 @@ def CetakSelesai(request, id):
     pangkat = GolonganHistoryModel.objects.filter(nama_id=pegawai.golongan, pengguna=pegawai.id).first()
     # pangkat = get_object_or_404(GolonganHistoryModel, nama_id=pegawai.golongan, pengguna=pegawai.id)
     simbol = get_object_or_404(GolonganModel, id=pegawai.golongan_id)
-    nominatif = get_object_or_404(NominatifSelesaiModels, pegawai_id=pegawai.id)
+    nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=pegawai.id)
     gajibaru = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
     gajilama = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mk_tahun)
     opd = get_object_or_404(OpdModel, id=pegawai.opd_id)
@@ -607,23 +608,23 @@ def CetakSelesai(request, id):
         tmt_kgb=nominatif.tmt_kgb
         )
     nominatif.delete()
-    print(inputselesai.id)
-    # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
-    context = {'nominatif': nominatif, 'data': pegawai, 'pangkat': pangkat,
-               'gajibaru': gajibaru, 'gajilama': gajilama, 'kgbnext': kgbnext, 'simbol': simbol}
-    # Create a Django response object, and specify content_type as pdf
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="report.pdf"'
-    # find the template and render it.
-    template = get_template(template_path)
-    html = template.render(context)
-    # create a pdf
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    # if error then show some funy view
-    if pisa_status.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    return HttpResponse(pisa_status)
-
+    # print(inputselesai.id)
+    # # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
+    # context = {'nominatif': nominatif, 'data': pegawai, 'pangkat': pangkat,
+    #            'gajibaru': gajibaru, 'gajilama': gajilama, 'kgbnext': kgbnext, 'simbol': simbol}
+    # # Create a Django response object, and specify content_type as pdf
+    # response = HttpResponse(content_type='application/pdf')
+    # response['Content-Disposition'] = 'filename="report.pdf"'
+    # # find the template and render it.
+    # template = get_template(template_path)
+    # html = template.render(context)
+    # # create a pdf
+    # pisa_status = pisa.CreatePDF(html, dest=response)
+    # # if error then show some funy view
+    # if pisa_status.err:
+    #     return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    # return HttpResponse(pisa_status)
+    return redirect('pegawai:selesai')
 
 def ProsesDetail(request, id):
     request.session['username']
@@ -708,7 +709,7 @@ def SelesaiDetail(request, id):
     data = get_object_or_404(PegawaiModel, id=id)
     gol = get_object_or_404(GolonganModel, id =data.golongan_id)
     pangkat = GolonganHistoryModel.objects.filter(pengguna=data.id, nama=data.golongan).first()
-    print(pangkat)
+    print(pangkat, "SELESAI DETAIL")
     # pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
     nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
@@ -755,3 +756,15 @@ def CetakBerkala(request, id):
     if pisa_status.err:
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
+
+def PangkatDetail(request, id):
+    request.session['username']
+    gol = get_object_or_404(GolonganHistoryModel, id =id)
+    pegawai = get_object_or_404(PegawaiModel, id = gol.pengguna)
+    if request.method == "POST":
+        tglpenetapan = request.POST.get('tglpenetapan')
+        pejabat = request.POST.get('pejabat')
+        print(tglpenetapan, pejabat)
+        return render(request, "pegawai/pangkatdetail.html", {'gol':gol , 'pegawai':pegawai})
+    return render(request, "pegawai/pangkatdetail.html", {'gol':gol , 'pegawai':pegawai})
