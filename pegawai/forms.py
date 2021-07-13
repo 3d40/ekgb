@@ -1,6 +1,9 @@
-from django import forms
+from django import  forms
 from django.contrib.auth import authenticate
-from . models import *
+from django.db.models.fields import DateField
+from django.forms import widgets
+from .models import *
+from functools import partial
 
 
 class UserLoginForm(forms.Form):
@@ -22,12 +25,22 @@ class UserLoginForm(forms.Form):
         return super(UserLoginForm, self).clean(*args, **kwargs)
     
 class GolonganHistoryForm(forms.ModelForm):
-    class Meta:
-        models = GolonganHistoryModel
-        fields = ['nama','nomor_sk','tanggal','mk_tahun','mk_bulan']
     
+    def __init__(self, *args, **kwargs):
+        super(GolonganHistoryForm, self).__init__(*args, **kwargs)
+        self.fields['nama'].disabled = True,
+        self.fields['nomor_sk'].disabled = True
+        self.fields['tanggal'].disabled = True
+        #self.fields['mk_tahun'].disabled = True
+        #self.fields['mk_bulan'].disabled = True
 
-class NominatifForm(forms.ModelForm):
+
+    class Meta:
+        model = GolonganHistoryModel
+        fields = ['nama','nomor_sk','tanggal','mk_tahun','mk_bulan','tglpenetapan','pejabat']
+    
+        
+class NominatifForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(NominatifForm, self).__init__(*args, **kwargs)
         self.fields['pegawai'].disabled = True,
@@ -36,3 +49,10 @@ class NominatifForm(forms.ModelForm):
     class Meta:
         model = NominatifxModels
         fields = '__all__'
+
+
+class PegawaiModelForm(forms.ModelForm):
+    class Meta:
+        model = PegawaiModel
+        fields = '__all__'
+    

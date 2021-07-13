@@ -2,6 +2,7 @@ arabic-reshaper==2.1.3
 asgiref==3.3.1
 autopep8==1.5.7
 Django==3.1.7
+django-crispy-forms==1.12.0
 django-filter==2.4.0
 future==0.18.2
 html5lib==1.1

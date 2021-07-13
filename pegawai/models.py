@@ -27,6 +27,7 @@ class PegawaiModel(models.Model):
     jenis_jabatan =  models.CharField(max_length=100, blank=True, null=True)
     pddk_terakhir = models.CharField(max_length=100, blank=True, null=True)
     tmt_pns = models.DateField(default=datetime.datetime.now, null=True, blank=True)
+    tgllahir = models.DateField(null=True, blank=True, default='1990-01-01')
 
     def __str__(self):
         return self.nama
@@ -52,10 +53,11 @@ class GolonganHistoryModel(models.Model):
     jenis = models.CharField(max_length=50, null=True, blank=True)
     tanggal = models.DateField(default=2021-3-20, blank=True, null=True, verbose_name="Tanggal")
     dokumen = models.FileField(upload_to='upload/skpangkat/', blank=True, null=True, verbose_name="Dokumen")
-    mk_tahun = models.IntegerField(null=True, default=0)
-    mk_bulan = models.IntegerField(null=True, default=0)
+    mk_tahun = models.IntegerField(null=True, default=0, verbose_name="Masa Kerja Tahun")
+    mk_bulan = models.IntegerField(null=True, default=0, verbose_name="Masa Kerja Bulan")
     dasarnominatif = models.BooleanField(null=True, default=False)
-    tglpenetapan = models.DateTimeField(null=True, blank=True, verbose_name="penetapan")
+    tglpenetapan = models.DateField(null=True, blank=True, verbose_name="Tanggal Penetapan")
+    pejabat = models.CharField(max_length=50, null=True, blank=True, default="GUBERNUR JAMBI")
     
     class Meta:
         managed=True,
@@ -82,8 +84,6 @@ class JabatanModel(models.Model):
         ('jft5', 'Pelaksana Pemula'),
         ('jft6', 'Pelaksana'),
         ('jft7', 'Ahli Utama'),
-
-
     ]
     jenis = models.CharField(max_length=30, choices=pilihan_jenis, default='jfu')
     nama = models.CharField(max_length=100)

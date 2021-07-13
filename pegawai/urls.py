@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-from . models import PegawaiModel
+from .models import PegawaiModel
 from django.views.generic import ListView
 
 app_name = 'pegawai'

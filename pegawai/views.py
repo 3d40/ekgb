@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 import csv
 import io
 from .models import *
-import urllib
+import urllib.request
 import json
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -550,7 +550,7 @@ def UpdateDataPegawai(request, id):
     data = json.load(openjson)
     print(data)
     for x in data:
-        pegawai.golongan_id=x['golongan_id']
+        # pegawai.golongan_id=x['golongan_id']
         pegawai.opd_id=x['company_id']
         pegawai.save()
     return redirect('pegawai:detail', pegawai.id)
@@ -758,13 +758,30 @@ def CetakBerkala(request, id):
     return response
 
 
+# def PangkatDetail(request, id):
+#     request.session['username']
+#     gol = get_object_or_404(GolonganHistoryModel, id =id)
+#     pegawai = get_object_or_404(PegawaiModel, id = gol.pengguna)
+#     if request.method == "POST":
+#         tglpenetapan = request.POST.get('tglpenetapan')
+#         pejabat = request.POST.get('pejabat')
+#         print(tglpenetapan, pejabat)
+#         return render(request, "pegawai/pangkatdetail.html", {'gol':gol , 'pegawai':pegawai})
+#     return render(request, "pegawai/pangkatdetail.html", {'gol':gol , 'pegawai':pegawai})
+
 def PangkatDetail(request, id):
-    request.session['username']
-    gol = get_object_or_404(GolonganHistoryModel, id =id)
-    pegawai = get_object_or_404(PegawaiModel, id = gol.pengguna)
-    if request.method == "POST":
-        tglpenetapan = request.POST.get('tglpenetapan')
-        pejabat = request.POST.get('pejabat')
-        print(tglpenetapan, pejabat)
-        return render(request, "pegawai/pangkatdetail.html", {'gol':gol , 'pegawai':pegawai})
-    return render(request, "pegawai/pangkatdetail.html", {'gol':gol , 'pegawai':pegawai})
+    gol= get_object_or_404(GolonganHistoryModel, id=id)
+    pegawai = get_object_or_404(PegawaiModel, id= gol.pengguna)
+    form = GolonganHistoryForm(request.POST or None, instance= gol)
+    context= {'form': form}
+    if form.is_valid():
+        # obj= form.save(commit= False)
+        # obj.save()
+        obj = form.save(commit=True)
+        obj.save()
+        messages.success(request, "Berhasil Update Data Pangkat")
+        context= {'form': form}
+        return render(request, 'pegawai/detailpangkat.html', context)
+    else:
+        context= {'form': form,'error': 'Data Pangkat Belum Diupdate'}
+    return render(request,'pegawai/detailpangkat.html' , context)
