@@ -99,12 +99,12 @@ def HitungPangkatView(request, id):
     opdakses = request.session['opd_akses']
     pegawai = get_object_or_404(PegawaiModel, id=id)
     print(pegawai.id)
+    context = {
+            'pegawai':pegawai
+            }  
     try:
         pangkat = urllib.request.urlopen(urlpangkat + str(pegawai.id))
         json_pangkat = json.load(pangkat)
-        context = {
-            'pegawai':pegawai
-            }
         for pkt in json_pangkat:
             list_pangkat = GolonganHistoryModel.objects.filter(pengguna=pegawai.id).update_or_create(
                 id=pkt['id'], 
