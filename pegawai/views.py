@@ -554,13 +554,17 @@ def LoadPegawaiView(request, id=None):
 
 def UpdateDataPegawai(request, id):
     pegawai = get_object_or_404(PegawaiModel, id=id)
-    openjson = urllib.request.urlopen(urlpegawai + str(pegawai.nip))
-    data = json.load(openjson)
-    print(data)
-    for x in data:
-        # pegawai.golongan_id=x['golongan_id']
-        pegawai.opd_id=x['company_id']
-        pegawai.save()
+    try :
+        openjson = urllib.request.urlopen(urlpegawai + str(pegawai.nip))
+        data = json.load(openjson)
+        for x in data:
+            pegawai.golongan_id=x['golongan_id']
+            pegawai.opd_id=x['company_id']
+            pegawai.save()
+    except SocketError as e:
+        if e.errno != errno.ECONNRESET:
+            raise # Not error we are looking for
+        pass # Handle error here.
     return redirect('pegawai:detail', pegawai.id)
 
 
