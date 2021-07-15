@@ -102,13 +102,16 @@ def HitungPangkatView(request, id):
         'pegawai':pegawai
         }
     for pkt in json_pangkat:
-        list_pangkat = GolonganHistoryModel.objects.filter(pengguna=pegawai.id).update_or_create(
-            id=pkt['id'], 
-            pengguna=pkt['partner'], 
-            nama_id=pkt['golongan_id_history'], 
-            nip=pegawai.nip, jenis=pkt['jenis'], 
-            tanggal=pkt['date'],
-            nomor_sk = pkt['name']),
+        try:
+            list_pangkat = GolonganHistoryModel.objects.filter(pengguna=pegawai.id).update_or_create(
+                id=pkt['id'], 
+                pengguna=pkt['partner'], 
+                nama_id=pkt['golongan_id_history'], 
+                nip=pegawai.nip, jenis=pkt['jenis'], 
+                tanggal=pkt['date'],
+                nomor_sk = pkt['name'])
+        except:
+            pass
     return render(request, template_name,context)
 
 
