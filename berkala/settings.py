@@ -87,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ekgb',
         'USER': 'datainfo',
-        'PASSWORD': 'admin',
+        'PASSWORD': '3d4086t',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -136,3 +136,4 @@ STATICFILES_DIRS = [
     '/static/',
 ]
 DATE_INPUT_FORMATS = '%d-%m-%Y'
+DEFAULT_AUTO_FIELD ='django.db.models.AutoField' 
