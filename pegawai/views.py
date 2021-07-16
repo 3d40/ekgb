@@ -43,8 +43,7 @@ urlpangkat = 'http://202.179.184.151:8000/riwayatpangkat/?search='
 
 def LoginView(request):
     if request.POST:
-        user = authenticate(
-            username=request.POST['username'], password=request.POST['password'])
+        user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
             akun = AkunModel.objects.get(akun_id=user.id)
             request.session['opd_akses'] = akun.opd_akses.id
@@ -54,11 +53,9 @@ def LoginView(request):
                     login(request, user)
                     return redirect('pegawai:index')
                 except:
-                    messages.add_m/ge(request, messages.INFO,
-                                     'User belum terverifikasi')
+                    messages.add_message(request, messages.INFO,'User belum terverifikasi')
         else:
-            messages.add_message(request, messages.INFO,
-                                 'Username atau password Anda salah')
+            messages.add_message(request, messages.INFO,'Username atau password Anda salah')
     return render(request, 'registration/login.html')
 
 
@@ -142,9 +139,6 @@ class Pegawai(ListView):
             queryset = self.queryset
             if isinstance(queryset, PegawaiModel):
                 queryset = self.queryset.all()
-
-        # elif self.model is not None:
-        #     queryset = self.model._default_manager.all()
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
@@ -530,7 +524,12 @@ class OpdListView(ListView):
 
 def LoadPegawaiView(request, id=None):
     opd = OpdModel.objects.get(id=id)
-    openjson = urllib.request.urlopen(urlcompany + str(opd.id))
+    try:
+        openjson = urllib.request.urlopen(urlcompany + str(opd.id))
+    except SocketError as e:
+        if e.errno != errno.ECONNRESET:
+            raise # Not error we are looking for
+        pass # Handle error here.  
     data = json.load(openjson)
     for pegawai in data:
         inputdata = PegawaiModel.objects.update_or_create(
@@ -620,22 +619,6 @@ def CetakSelesai(request, id):
         tmt_kgb=nominatif.tmt_kgb
         )
     nominatif.delete()
-    # print(inputselesai.id)
-    # # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
-    # context = {'nominatif': nominatif, 'data': pegawai, 'pangkat': pangkat,
-    #            'gajibaru': gajibaru, 'gajilama': gajilama, 'kgbnext': kgbnext, 'simbol': simbol}
-    # # Create a Django response object, and specify content_type as pdf
-    # response = HttpResponse(content_type='application/pdf')
-    # response['Content-Disposition'] = 'filename="report.pdf"'
-    # # find the template and render it.
-    # template = get_template(template_path)
-    # html = template.render(context)
-    # # create a pdf
-    # pisa_status = pisa.CreatePDF(html, dest=response)
-    # # if error then show some funy view
-    # if pisa_status.err:
-    #     return HttpResponse('We had some errors <pre>' + html + '</pre>')
-    # return HttpResponse(pisa_status)
     return redirect('pegawai:selesai')
 
 def ProsesDetail(request, id):
