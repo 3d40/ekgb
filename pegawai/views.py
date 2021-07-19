@@ -101,20 +101,19 @@ def HitungPangkatView(request, id):
         }  
     try:
         pangkat = urllib.request.urlopen(urlpangkat + str(pegawai.id))
-        json_pangkat = json.load(pangkat)
     except SocketError as e:
         if e.errno != errno.ECONNRESET:
             raise # Not error we are looking for
         # pass # Handle error here
-    else:
-        for pkt in json_pangkat:
-            list_pangkat = GolonganHistoryModel.objects.filter(pengguna=pegawai.id).update_or_create(
-                id=pkt['id'], 
-                pengguna=pkt['partner'], 
-                nama_id=pkt['golongan_id_history'], 
-                nip=pegawai.nip, jenis=pkt['jenis'], 
-                tanggal=pkt['date'],
-                nomor_sk = pkt['name'])
+    json_pangkat = json.load(pangkat)
+    for pkt in json_pangkat:
+        GolonganHistoryModel.objects.filter(pengguna=pegawai.id).update_or_create(
+            id=pkt['id'], 
+            pengguna=pkt['partner'], 
+            nama_id=pkt['golongan_id_history'], 
+            nip=pegawai.nip, jenis=pkt['jenis'], 
+            tanggal=pkt['date'],
+            nomor_sk = pkt['name'])
     return render(request, template_name,context)
 
 
