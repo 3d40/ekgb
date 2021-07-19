@@ -102,11 +102,12 @@ def HitungPangkatView(request, id):
     try:
         pangkat = urllib.request.urlopen(urlpangkat + str(pegawai.id))
         json_pangkat = json.load(pangkat)
+        print(json_pangkat)
     except SocketError as e:
         print("ada error", e)
         if e.errno != errno.ECONNRESET:
             raise # Not error we are looking for
-        # pass # Handle error here
+        pass # Handle error here
     else:
         for pkt in json_pangkat:
             GolonganHistoryModel.objects.filter(pengguna=pegawai.id).update_or_create(
