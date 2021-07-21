@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 import csv
 import io
 from .models import *
-import urllib.request
+from urllib.request import urlopen
 import json
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -31,14 +31,15 @@ from .filter import FilterPegawai
 import os.path
 from xhtml2pdf import pisa
 from django.template.loader import get_template
+import requests
 
 from socket import error as SocketError
 import errno
 # Create your views here.
 
-urlpegawai = 'http://202.179.184.151:8000/nip/?search='
-urlcompany = 'http://202.179.184.151:8000/nip/?company='
-urlpangkat = 'http://202.179.184.151:8000/riwayatpangkat/?search='
+urlpegawai = 'http://103.146.244.150:8000/nip/?search='
+urlcompany = 'http://103.146.244.150:8000/nip/?company='
+urlpangkat = 'http://103.146.244.150:8000/riwayatpangkat/?search='
 
 
 def LoginView(request):
@@ -100,9 +101,9 @@ def HitungPangkatView(request, id):
         'pegawai':pegawai
         }  
     try:
-        pangkat = urllib.request.urlopen(urlpangkat + str(pegawai.id))
+        pangkat = urlopen(urlpangkat + str(pegawai.id))
         json_pangkat = json.load(pangkat)
-        print(json_pangkat)
+        # print(json_pangkat)
     except SocketError as e:
         print("ada error", e)
         if e.errno != errno.ECONNRESET:
@@ -783,3 +784,30 @@ def PangkatDetail(request, id):
     else:
         context= {'form': form,'error': 'Data Pangkat Belum Diupdate'}
     return render(request,'pegawai/detailpangkat.html' , context)
+
+
+class PegawaiAll(ListView):
+    model = PegawaiModel
+    ordering = ['opd_id']
+    template_name = "pegawaimodelall_list.html"
+    paginate_by = 25
+
+    def get_queryset(self):
+        return PegawaiModel.objects.all()
+
+class ProsesBerkalaPegawaiAll(ListView):
+    model = ProsesBerkalaModel
+    ordering = ['tmt_kgb']
+    template_name = "prosesberkalamodelall_list.html"
+
+    def get_queryset(self):
+        return ProsesBerkalaModel.objects.all()
+
+
+class NominatifBerkalaPegawaiAll(ListView):
+    model = NominatifxModels
+    ordering = ['tmt_kgb']
+    template_name = "nominatifxmodelsall_list.html.html"
+
+    def get_queryset(self):
+        return NominatifxModels.objects.all()
