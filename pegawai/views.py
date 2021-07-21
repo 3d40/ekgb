@@ -529,7 +529,7 @@ class OpdListView(ListView):
 def LoadPegawaiView(request, id=None):
     opd = OpdModel.objects.get(id=id)
     try:
-        openjson = urllib.request.urlopen(urlcompany + str(opd.id))
+        openjson = urlopen(urlcompany + str(opd.id))
     except SocketError as e:
         if e.errno != errno.ECONNRESET:
             raise # Not error we are looking for
@@ -558,7 +558,7 @@ def LoadPegawaiView(request, id=None):
 def UpdateDataPegawai(request, id):
     pegawai = get_object_or_404(PegawaiModel, id=id)
     try :
-        openjson = urllib.request.urlopen(urlpegawai + str(pegawai.nip))
+        openjson = urlopen(urlpegawai + str(pegawai.nip))
         data = json.load(openjson)
         for x in data:
             pegawai.golongan_id=x['golongan_id']
