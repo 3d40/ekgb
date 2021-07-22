@@ -52,7 +52,7 @@ class GolonganHistoryModel(models.Model):
     nomor_sk = models.CharField(max_length=150, null=True,blank=True, default="S-10225/BKD-2.2/", verbose_name="Nomor SK")
     jenis = models.CharField(max_length=50, null=True, blank=True)
     tanggal = models.DateField(default=2021-3-20, blank=True, null=True, verbose_name="Tanggal")
-    dokumen = models.FileField(upload_to='upload/skpangkat/', blank=True, null=True, verbose_name="Dokumen")
+    dokumen = models.FileField(upload_to='upload/berkas/', blank=True, null=True, verbose_name="Dokumen")
     mk_tahun = models.IntegerField(null=True, default=0, verbose_name="Masa Kerja Tahun")
     mk_bulan = models.IntegerField(null=True, default=0, verbose_name="Masa Kerja Bulan")
     dasarnominatif = models.BooleanField(null=True, default=False)
@@ -69,7 +69,11 @@ class GolonganHistoryModel(models.Model):
 class OpdModel(models.Model):
     nama = models.CharField(max_length=255)
     kepala_opd = models.IntegerField(blank=True, null=True, default=0)
-
+    alamat = models.CharField(max_length=255, null=True, blank=True)
+    telpon = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True, blank=True)
+    website = models.CharField(max_length=255, null=True, blank=True)
+    
     def __str__(self):
         return self.nama
 

@@ -9,3 +9,4 @@ from pegawai.models import *
 #     list_per_page = 25
 admin.site.register(AkunModel)
 admin.site.register(GolonganModel)
+admin.site.register(OpdModel)

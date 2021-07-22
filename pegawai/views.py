@@ -71,23 +71,56 @@ def LogoutView(request):
 
 @login_required()
 def IndexView(request):
-    request.session['username']
+    userdata = request.session['username']
+    user = User.objects.get(username= userdata)
     opdakses = request.session['opd_akses']
-    pegawai = PegawaiModel.objects.filter(opd_id=opdakses)
-    usulan = len(NominatifxModels.objects.filter(opd=opdakses))
-    proses = len(ProsesBerkalaModel.objects.filter(opd=opdakses))
-    selesai = len(NominatifSelesaiModels.objects.filter(opd=opdakses))
-    jumlah = len(pegawai)
+    print(userdata, user.is_active, user.is_staff, user.is_superuser)
+    if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        pegawai = PegawaiModel.objects.all()
+        disetujui = NominatifxModels.objects.all()
+        diproses = ProsesBerkalaModel.objects.all()
+        finish = NominatifSelesaiModels.objects.all()
+        jumlah = len(pegawai)
+        usulan = len(disetujui)
+        selesai = len(finish)
+        proses = len(diproses)
+        context = {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses}
+        return render(request, 'pegawai/dahsboard.html', context)
+    elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+        pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
+        disetujui = NominatifxModels.objects.filter(opd = opdakses)
+        diproses = ProsesBerkalaModel.objects.filter(opd = opdakses)
+        finish = NominatifSelesaiModels.objects.filter(opd = opdakses) 
+        jumlah = len(pegawai)
+        usulan = len(disetujui)
+        selesai = len(finish)
+        proses = len(diproses)
+        context = {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses}
+        return render(request, 'pegawai/dahsboard.html', context)
+    else:
+        messages.add_message("anda Tidak Memiliki Account")
+    return render(request, 'pegawai/dahsboard.html')
+
+        
+
+        
+    # opdakses = request.session['opd_akses']
+    # pegawai = PegawaiModel.objects.filter(opd_id=opdakses)
+    # usulan = len(NominatifxModels.objects.filter(opd=opdakses))
+    # proses = len(ProsesBerkalaModel.objects.filter(opd=opdakses))
+    # selesai = len(NominatifSelesaiModels.objects.filter(opd=opdakses))
+    # jumlah = len(pegawai)
+    
     # cari TMT_CPNS
-    for x in pegawai:
-        tahun = int(x.nip[8:12])
-        bulan = int(x.nip[12:14])
-        tanggal = 1
-        cpns = datetime.date(tahun, bulan, tanggal)
-        q = get_object_or_404(PegawaiModel, id=x.id)
-        q.tmt_cpns = cpns
-        q.save()
-    return render(request, 'pegawai/dahsboard.html', {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses})
+    # for x in pegawai:
+    #     tahun = int(x.nip[8:12])
+    #     bulan = int(x.nip[12:14])
+    #     tanggal = 1
+    #     cpns = datetime.date(tahun, bulan, tanggal)
+    #     q = get_object_or_404(PegawaiModel, id=x.id)
+    #     q.tmt_cpns = cpns
+    #     q.save()
+    return render(request, 'pegawai/dahsboard.html', context)
 
 
 @login_required()
@@ -135,14 +168,24 @@ class Pegawai(ListView):
     template_name = 'pegawai/pegawaimodel_list.html'
     paginate_by = 25
 
-    def get_queryset(self):
-        self.request.session['username']
+    def get_queryset(self,):
+        userdata = self.request.session['username']
+        user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
-        self.queryset = self.model.objects.filter(opd_id=opdakses)
-        if self.queryset is not None:
-            queryset = self.queryset
-            if isinstance(queryset, PegawaiModel):
-                queryset = self.queryset.all()
+        print(userdata, user.is_active, user.is_staff, user.is_superuser)
+        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+            queryset = PegawaiModel.objects.all()
+        elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+            queryset = PegawaiModel.objects.filter(opd_id =opdakses)
+
+        # self.request.session['username']
+        # opdakses = self.request.session['opd_akses']
+        # self.queryset = self.model.objects.all()
+        # self.queryset = self.model.objects.filter(opd_id=opdakses)
+        # if self.queryset is not None:
+        #     queryset = self.queryset
+        #     if isinstance(queryset, PegawaiModel):
+        #         queryset = self.queryset.all()
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
@@ -160,13 +203,18 @@ class Pegawai(ListView):
 
 
 def CariView(request):
-    request.session['username']
+    userdata = request.session['username']
     opdakses = request.session['opd_akses']
-    queryset = PegawaiModel.objects.filter(opd_id=opdakses)
+    queryset = PegawaiModel.objects.all()
+    user = User.objects.get(username= userdata)
     cari = request.GET.get('search', '')
     if cari is not None and cari != '':
-        caripegawai = PegawaiModel.objects.filter(
-            opd_id=opdakses, nama__icontains=cari)
+        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+            caripegawai = PegawaiModel.objects.filter(nama__icontains=cari)
+            return render(request, 'pegawai/caripegawai_list.html', {'object_list': caripegawai})
+        elif user.is_superuser == False and user.is_staff == True and user.is_active == True: 
+            caripegawai = PegawaiModel.objects.filter(opd_id=opdakses, nama__icontains=cari)
+            return render(request, 'pegawai/caripegawai_list.html', {'object_list': caripegawai})
     else:
         return redirect('pegawai:pegawai')
     return render(request, 'pegawai/caripegawai_list.html', {'object_list': caripegawai})
