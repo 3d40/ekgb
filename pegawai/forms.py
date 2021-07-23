@@ -55,4 +55,14 @@ class PegawaiModelForm(forms.ModelForm):
     class Meta:
         model = PegawaiModel
         fields = '__all__'
+
+
+class  TundaForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(TundaForm, self).__init__(*args, **kwargs)
+        self.fields['pegawai'].disabled = True,
+        self.fields['opd'].disabled = True
     
+    class Meta:
+        model = NominatifTundaModel
+        fields = '__all__'
