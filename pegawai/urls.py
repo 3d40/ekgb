@@ -12,7 +12,6 @@ urlpatterns = [
     path('pegawai/cari', views.CariView, name = 'cari'),
     path('pegawai/detail/<int:id>', views.HitungPangkatView, name='detail'),
     path('pegawai/detail/update/<int:id>', views.UpdateDataPegawai, name='update'),  
-
     path('pegawai/pangkat/<int:id>', views.PangkatDetail, name='detailpangkat'),  
 
     
@@ -21,7 +20,7 @@ urlpatterns = [
     path('pegawai/daftarnominatif/detail/<int:id>', views.NominatifDetailView, name='nominatifdetail'),
     path('pegawai/daftarnominatif/proses/<int:id>/manual', views.ProsesManualNominatif, name='prosesnominatifmanual'),
 
-    
+    path('pegawai/tunda/list', views.NominatifTunda.as_view(), name='tunda'),
     path('pegawai/daftarnominatif/selesai/', views.SelesaiList.as_view(), name='selesai'),
     path('pegawai/daftarnominatif/selesai/detail/<int:id>', views.SelesaiDetail, name='selesaidetail'),
     
