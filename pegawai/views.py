@@ -957,6 +957,34 @@ def TundaView(request, id):
             pass
         return render(request, 'pegawai/tundadetail.html',context)
     return render(request, 'pegawai/tundadetail.html',{'form':form})
-
     
+    
+def TundaDelete(request, id):
+    template_name = 'pegawai/nominatiftundamodel_list.html'
+    userdata = self.request.session['username']
+    user = User.objects.get(username= userdata)
+    opdakses = self.request.session['opd_akses']
+    print(userdata, user.is_active, user.is_staff, user.is_superuser)
+    if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        queryset = NominatifTundaModel.objects.all()
+    elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+        queryset = NominatifTundaModel.objects.filter(opd_id =opdakses)
+    tundadata = get_object_or_404(NominatifTundaModel, id =id)
+    tundadata.delete()
+    return render(request, template_name, {'object_list':queryset})
+
+
+
+# delete view for details
+def TundaDeleteView(request, id):
+	context ={}
+	obj = get_object_or_404(NominatifTundaModel, id = id)
+	if request.method =="POST":
+		# delete object
+		obj.delete()
+		# after deleting redirect to
+		# home page
+		return redirect("pegawai:tunda")
+	return render(request, "pegawai/delete_view.html", {'context':context, 'obj':obj})
+
     

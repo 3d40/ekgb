@@ -50,5 +50,5 @@ urlpatterns = [
     path('pegawai/all/nominatif/', views.NominatifBerkalaPegawaiAll.as_view(), name='adminnominatif'),
     
     path('pegawai/tunda/<int:id>', views.TundaView, name='tundaproses'),
-    # path('pegawai/tunda/proses/', views.TundaViewProses, name='tundaproseslanjut'),
-]
+    path('pegawai/tunda/delete/<int:id>', views.TundaDeleteView, name='tundadelete')
+    ]
