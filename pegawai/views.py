@@ -786,8 +786,6 @@ def CetakDetail(request, id):
     return render(request, "pegawai/selesaidetail.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
 
 def CetakBerkala(request, id):
-    request.session['username']
-    opdakses = request.session['opd_akses']
     template_path = 'pegawai/cetakpdf.html'
     pegawai = get_object_or_404(PegawaiModel, id=id)
     pangkat = GolonganHistoryModel.objects.filter( nama_id=pegawai.golongan, pengguna=pegawai.id).first()
@@ -805,7 +803,8 @@ def CetakBerkala(request, id):
         'gajibaru': gajibaru, 
         'gajilama': gajilama, 
         'kgbnext': kgbnext, 
-        'simbol': simbol}
+        'simbol': simbol
+        }
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="report.pdf"'
     template = get_template(template_path)

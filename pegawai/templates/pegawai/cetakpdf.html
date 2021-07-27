@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,7 +132,7 @@
         <tr height=17>
             <td width=75></td>
             <td align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dengan ini diberitahukan, bahwa sehubungan dengan telah dipenuhi masa kerja dan syarat-syarat lainnya maka kepada :</font>
+                <font style=font-size:10pt face="arial narrow" color=#000000>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dengan ini diberitahukan, bahwa sehubungan dengan telah dipenuhi masa kerja dan syarat-syarat lainnya maka kepada :</font>
             </td>
         </tr>
     </table>
@@ -140,7 +141,7 @@
         <tr height=25>
             <td width=80 align=left> <br></td>
             <td width=240 align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000>1.&nbsp;&nbsp; Nama</font>
+                <font style=font-size:10pt face="arial narrow" color=#000000>1.&nbsp;&nbsp;Nama</font>
             </td>
             <td width=9 align=center bgcolor=#ffffff>
                 <font style=font-size:10pt face="arial narrow" color=#000000>:</font>
@@ -155,7 +156,7 @@
         <tr height=25>
             <td width=80 align=left> <br></td>
             <td width=240 align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000>2.&nbsp;&nbsp; Nomor Induk Pegawai (NIP)</font>
+                <font style=font-size:10pt face="arial narrow" color=#000000>2.&nbsp;&nbsp;Nomor Induk Pegawai (NIP)</font>
             </td>
             <td width=9 align=center bgcolor=#ffffff>
                 <font style=font-size:10pt face="arial narrow" color=#000000>:</font>
@@ -169,13 +170,13 @@
         <tr height=25>
             <td width=80 align=left> <br></td>
             <td width=240 align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000>3.&nbsp;&nbsp; Pangkat/Golongan</font>
+                <font style=font-size:10pt face="arial narrow" color=#000000>3.&nbsp;&nbsp;Pangkat/Golongan</font>
             </td>
             <td width=9 align=center bgcolor=#ffffff>
                 <font style=font-size:10pt face="arial narrow" color=#000000>:</font>
             </td>
             <td align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial" color=#000000>{{data.golongan}}/({{simbol.simbol}})</font>
+                <font style=font-size:10pt face="arial" color=#000000>&nbsp;{{data.golongan}}/({{simbol.simbol}})</font>
             </td>
         </tr>
     </table>
@@ -183,7 +184,7 @@
         <tr height=25>
             <td width=80 align=left> <br></td>
             <td width=240 align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000>4.&nbsp;&nbsp; Kantor/Tempat</font>
+                <font style=font-size:10pt face="arial narrow" color=#000000>4.&nbsp;&nbsp;Kantor/Tempat</font>
             </td>
             <td width=9 align=center bgcolor=#ffffff>
                 <font style=font-size:10pt face="arial narrow" color=#000000>:</font>
@@ -197,13 +198,13 @@
         <tr height=25>
             <td width=80 align=left></td>
             <td width=240 align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000>5.&nbsp;&nbsp; Gaji Pokok Lama</font>
+                <font style=font-size:10pt face="arial narrow" color=#000000>5.&nbsp;&nbsp;Gaji Pokok Lama</font>
             </td>
             <td width=9 align=center bgcolor=#ffffff>
                 <font style=font-size:10pt face="arial narrow" color=#000000>:</font>
             </td>
             <td align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial" color=#000000>&nbsp;Rp. {{gajilama.tbgaji_currency}}</font>
+                <font style=font-size:10pt face="arial" color=#000000>&nbsp;Rp. {{gajilama.tbgaji_currency|intcomma}}</font>
             </td>
         </tr>
     </table>
@@ -303,7 +304,7 @@
                 <font style=font-size:10pt face="arial narrow" color=#000000>:</font>
             </td>
             <td align=left bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial" color=#000000>&nbsp;Rp. {{gajibaru.tbgaji_currency}}</font>
+                <font style=font-size:10pt face="arial" color=#000000>&nbsp;Rp. {{gajibaru.tbgaji_currency|intcomma}}</font>
             </td>
         </tr>
     </table>
@@ -394,7 +395,7 @@
         <tr height=17>
             <td width=430 align=left> <br></td>
             <td width=220 align=center bgcolor=#ffffff><b><u>
-                <font style=font-size:10pt face="times new roman" color=#000000>KEPALA OPD</font></b></u></td>
+                <font style=font-size:10pt face="times new roman" color=#000000>{{opd.kepala_opd}}</font></b></u></td>
         </tr>
     </table>
     <table border=0 cellspacing=0 cellpadding=0>

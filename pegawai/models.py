@@ -68,7 +68,7 @@ class GolonganHistoryModel(models.Model):
 
 class OpdModel(models.Model):
     nama = models.CharField(max_length=255)
-    kepala_opd = models.IntegerField(blank=True, null=True, default=0)
+    kepala_opd = models.IntegerField(null=True, blank=True, default=0)
     alamat = models.CharField(max_length=255, null=True, blank=True)
     telpon = models.CharField(max_length=255, null=True, blank=True)
     email = models.CharField(max_length=255, null=True, blank=True)

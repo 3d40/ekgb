@@ -6,9 +6,9 @@
   <form action="{% url 'pegawai:nominatif'  %}" method="POST">
     {% csrf_token %}
     <input type="date" name ="tmtkgb" value="{{tmtkgb_date}}" >
-    <button class="btn">Cari</button>
-
-    <a href="{% url 'pegawai:listnominatifmanual'  %}" class="btn btn-primary btn-lg inactive" role="button" aria-pressed="false">Nominatif Manual</a>
+    {% comment %} <button class="btn">Cari</button> {% endcomment %}
+    <a class="btn btn-sm btn-info">Cari</a>
+    <a href="{% url 'pegawai:listnominatifmanual'  %}" class="btn btn-sm btn-info">Nominatif Manual</a>
   </form>
   
 </div>
