@@ -33,18 +33,21 @@
         <link rel="stylesheet" type="text/css" href="{% static 'pagestatic' %}/assets/css/util.css">
         <link rel="stylesheet" type="text/css" href="{% static 'pagestatic' %}/assets/css/main.css">
     <!--===============================================================================================-->
+
+
 </head>
 <body>
-	
+
 	<div class="limiter">
 		<div class="container-login100">
-			<div class="wrap-login100" style="width: 400px; height: 750px; background-image: linear-gradient(yellow,white); padding: 55px; border: 3px solid white; border-radius: 20px; border-style: ">
-				<form class="login100-form validate-form" id="login-form" method="post" action="{% url 'pegawai:login'  %}">
-					{% csrf_token %}
-					<span class="login100-form-title">
-						<img src="{% static '/images/logokgbprov.png' %}" style="width: 300px; border-bottom: 1px solid grey; border :">
-					</span>
-
+			<div class="wrap-login100">
+				<div class="login100-pic js-tilt" data-tilt>
+					<img src="{% static '/images/logogajiberkala12345.png' %}" alt="Badan Kepegawaian Daerah Provinsi Jambi">
+				</div>
+				
+				<form class="login100-form validate-form" id="login-form" method="post" action="{% url 'pegawai:login'  %}" >
+                    {% csrf_token %}
+					<span class="login100-form-title">e-KGB JAMBI</span>
 					<div class="wrap-input100 validate-input" data-validate = "Nama pengguna tidak boleh kosong!">
 						<input class="input100" type="text" name="username" placeholder="Nama Pengguna">
 						<span class="focus-input100"></span>
@@ -67,11 +70,15 @@
 						</button>
 					</div>					
 
-					
-					<div class="text-center p-t-100">
-						<p>Visit Us :</p>
-						<p><i class="fa fa-globe"></i><a href="https://bkd.jambiprov.go.id"> bkd.jambiprov.go.id</a></p>
-						<p><i class="fa fa-facebook"></i><a href="https://www.facebook.com/bkdprovjambi"> Facebook</a>&nbsp;&nbsp;&nbsp;<i class="fa fa-instagram"></i><a href="https://www.instagram.com/bkdprovjambi/?hl=id"> Instagram</a></p>
+					<div class="text-center p-t-12">
+						<span class="txt2">
+						</span>						
+					</div>
+
+					<div class="text-center p-t-136">
+						<a class="txt2" href="#">
+							BKD Provinsi Jambi						
+						</a>
 					</div>
 				</form>
 			</div>

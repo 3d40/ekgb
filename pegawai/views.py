@@ -1,12 +1,11 @@
-from typing import Text
 from django.db.models import query
 from django.db.models.expressions import Value, ValueRange
 from django.db.models.fields import CharField
-from django.db.models.query import QuerySet, ValuesListIterable
+from django.db.models.query import InstanceCheckMeta, QuerySet, ValuesListIterable
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.timezone import now
-from .forms import UserLoginForm
+# from .forms import UserLoginForm
 from django.contrib.auth import (
     authenticate,
     login,
@@ -87,7 +86,7 @@ def IndexView(request):
         selesai = len(finish)
         proses = len(diproses)
         tunda = len(pending)
-        context = {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses, 'pending':tunda}
+        context = {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses, 'tunda':tunda}
         return render(request, 'pegawai/dahsboard.html', context)
     elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
         pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
@@ -100,7 +99,7 @@ def IndexView(request):
         selesai = len(finish)
         proses = len(diproses)
         tunda = len(pending)
-        context = {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses, 'pending':tunda}
+        context = {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses, 'tunda':tunda}
         return render(request, 'pegawai/dahsboard.html', context)
     else:
         messages.add_message("anda Tidak Memiliki Account")
@@ -210,8 +209,7 @@ def NominatifViews(request):
             bulan = int(x.nip[12:14])
             tanggal = 1
             cpns = datetime.date(tahun, bulan, tanggal)
-            tmtkgb_date = datetime.datetime.strptime(
-                tmtkgb_post, '%Y-%m-%d').date()
+            tmtkgb_date = datetime.datetime.strptime(tmtkgb_post, '%Y-%m-%d').date()
             nominasi = relativedelta(tmtkgb_date, cpns).years % 2 == 0 and relativedelta(tmtkgb_date, cpns).months == 0
             nom = pegawai.get(id=x.id)
             nom.nominasi = nominasi
@@ -892,3 +890,73 @@ class NominatifTunda(ListView):
                 ordering = (ordering,)
             queryset = queryset.order_by(*ordering)
         return queryset
+
+def CetakDaftarNominatif(request):
+    request.session['username']
+    opdakses = request.session['opd_akses']
+    template_path = 'pegawai/cetaknominatif.html'
+    # pegawai = get_object_or_404(PegawaiModel, id=id)
+    nominatif = NominatifxModels.objects.filter(opd_id = opdakses)
+    context = {'nomintiflist': nominatif}
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="nominatif.pdf"'
+    template = get_template(template_path)
+    html = template.render(context)
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+# def TundaView(request, id):
+#     request.session['username']
+#     opdakses = request.session['opd_akses']
+#     data = get_object_or_404(PegawaiModel, id=id)
+#     gol = get_object_or_404(GolonganModel, id =data.golongan_id)
+#     pangkat = GolonganHistoryModel.objects.filter(pengguna=data.id, nama=data.golongan).first()
+#     print(pangkat, "SELESAI DETAIL")
+#     # pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
+#     nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
+#     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
+#     return render(request, "pegawai/tundadetail.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
+
+
+
+# def TundaViewProses(request):
+#     if request.method == 'POST':
+#         form = TundaForm(request.POST)
+#         if form.is_valid():
+
+
+def TundaView(request, id):
+    data = get_object_or_404(ProsesBerkalaModel, id=id)
+    pegawai = get_object_or_404(PegawaiModel, id = data.pegawai_id)
+    gaji = get_object_or_404(GajiModel, golongan_id = data.golongan_id, masa_kerja=data.mk_tahun)
+    golongan = get_object_or_404(GolonganModel, id=data.golongan_id)
+    form= TundaForm(request.POST or None, instance = data)
+    if request.method == 'POST':
+        context = {'form':form}
+        if form.is_valid():
+            keterangan = request.POST.get('keterangan')
+            NominatifTundaModel.objects.get_or_create(
+                golongan = data.golongan,
+                gaji = data.gaji,
+                jabatan = data.jabatan,
+                mk_tahun = data.mk_tahun,
+                mk_bulan = data.mk_bulan,
+                mkb_tahun = data.mkb_tahun,
+                mkb_bulan = data.mkb_bulan,
+                pegawai = data.pegawai,
+                opd = data.opd,
+                tanggal = data.tanggal,
+                tmt_kgb = data.tmt_kgb,
+                keterangan = keterangan
+            )
+            data.delete()
+            return redirect('pegawai:berkalalist')
+        else:
+            pass
+        return render(request, 'pegawai/tundadetail.html',context)
+    return render(request, 'pegawai/tundadetail.html',{'form':form})
+
+    
+    

@@ -47,13 +47,8 @@ urlpatterns = [
     path('pegawai/opdlist/<int:id>', views.LoadPegawaiView, name='loadpegawai'),
     path('pegawai/all/', views.PegawaiAll.as_view(), name='adminpegawai'),
     path('pegawai/all/proses/', views.ProsesBerkalaPegawaiAll.as_view(), name='adminproses'),
-    path('pegawai/all/nominatif/', views.NominatifBerkalaPegawaiAll.as_view(), name='adminnominatif')
+    path('pegawai/all/nominatif/', views.NominatifBerkalaPegawaiAll.as_view(), name='adminnominatif'),
     
-    # path('riwayatkgb', views.RiwayatKgbView, name='riwayatkgb'),
-    # path('welcome', views.IndexView, name='welcome'),
-    # path('uploaduser', views.UploadView, name='uploaduser'),
-    # path('uploadpegawai', views.UploadPegawai, name='uploadpegawai'),
-    # path('detail', views.DetailView, name = 'detail'),
-    # path('peropd', views.PerOpdView, name = 'uploadperopd'),
-   
+    path('pegawai/tunda/<int:id>', views.TundaView, name='tundaproses'),
+    # path('pegawai/tunda/proses/', views.TundaViewProses, name='tundaproseslanjut'),
 ]

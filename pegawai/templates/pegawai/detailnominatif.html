@@ -2,6 +2,7 @@
 {% block content %}
 {% if data %}
 <div class="col-md-12">
+    <h1>Halaman Usulan KGB yang Disetujui</h1>
     <div class="card">
         <div class="card-header bg-light">
             <h3>{{data.nama}}</h3>
@@ -49,11 +50,6 @@
                         <input id="tmtpns" name="skpd" class="form-control" value="{{gaji.tbgaji_currency}} ( {{gaji.terbilang}} )" readonly />
                     </div>
                         <a type="submit" class="btn btn-sm btn-info" href="{% url 'pegawai:prosesdetailpost' data.id %}">Proses</a>
-                </div>
-                <div class="col-md-12">
-                    <hr>
-                        <li color = "red">Apakah Data Sudah Benar...???</li>
-                   
                 </div>
                 
             </form>

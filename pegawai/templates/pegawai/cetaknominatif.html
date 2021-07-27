@@ -5,25 +5,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?php echo $pageTitle; ?> | e-KGB - BKD</title>
+    <title>Pemerintah Provinsi Jambi| e-KGB - BKD</title>
 </head>
 <body>
-    <table width="100%">
+    table class="table" >
+    <thead class="thead-dark" >
+      <tr>
+        <th scope="col" rowspan="2">Nomor</th>
+        <th scope="col" rowspan="2">NIP</th>
+        <th scope="col" rowspan="2">Nama</th>
+        <th scope="col" rowspan="2">Unit Kerja</th>
         <tr>
-            <td width=40 align="center"><img src="static/images/Logo.png" width="10%"></td>
-            <td align="center">
-                <b>
-                    <font style=font-size:12pt face="Times New Roman" color=#000000>PEMERINTAH PROVINSI JAMBI</font>
-                </b><br />
-                <b>
-                    <font style=font-size:14pt face="Times New Roman" color=#000000>BADAN KEPEGAWAIAN DAERAH</font>
-                </b><br />
-                <font style=font-size:8pt face="Times New Roman" color=#000000>Jalan RM. Noer Admadibrat No. 2 Telanaipura Telp. 0741 667691</font><br />
-                <font style=font-size:8pt face="Times New Roman" color=#000000>Website : http://bkd.jambiprov.go.id ; e-mail : datinfo.bkd.jambiprov@gmail.com</font><br />
-            </td>
+          <th>Pangkat</th>
+          <th>KGB</th>
+          <th>SKP</th>
         </tr>
-    </table>
-    <hr>
+        
+      </tr>
+    </thead>
+    <tbody>
+      
+        {% for x in nomintiflist %}
+        <th scope="row" >{{forloop.counter}}</th>
+        <td>{{x.pegawai}}</a></td>
+        <td>{{x.pegawai}}</a></td>
+        <td>{{x.opd}}</a></td>
+        {% endfor %}
+      </tbody>
+  </table>
 </body>
+
 </html>
 

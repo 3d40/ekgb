@@ -60,9 +60,11 @@ class PegawaiModelForm(forms.ModelForm):
 class  TundaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TundaForm, self).__init__(*args, **kwargs)
-        self.fields['pegawai'].disabled = True,
+        self.fields['pegawai'].disabled = True
         self.fields['opd'].disabled = True
-    
+        self.fields['keterangan'] = forms.CharField(widget=forms.Textarea, required = True)
+
     class Meta:
         model = NominatifTundaModel
-        fields = '__all__'
+        fields = ['pegawai','opd','keterangan']
+        # fields ='__all__'

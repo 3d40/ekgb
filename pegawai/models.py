@@ -40,23 +40,23 @@ class GolonganModel(models.Model):
     grade =models.IntegerField(default=0,blank=True, null=True)
 
     class Meta:
-        managed = True
-
+        managed=True,
+    
     def __str__(self):
         return self.nama
 
 class GolonganHistoryModel(models.Model):
     pengguna = models.IntegerField(null=True, blank=True)
     nip = models.CharField(max_length=50, null=True, blank=True, verbose_name= 'NIP')
-    nama = models.ForeignKey(GolonganModel ,models.DO_NOTHING, null=True,blank=True,default=24, verbose_name='Nama Golongan')
-    nomor_sk = models.CharField(max_length=150, null=True,blank=True, default="S-10225/BKD-2.2/", verbose_name="Nomor SK")
+    nama = models.ForeignKey('GolonganModel' ,models.DO_NOTHING, null=True,blank=True,default=24)
+    nomor_sk = models.CharField(max_length=150, null=True,blank=True, default="S-10225/BKD-2.2/")
     jenis = models.CharField(max_length=50, null=True, blank=True)
-    tanggal = models.DateField(default=2021-3-20, blank=True, null=True, verbose_name="Tanggal")
-    dokumen = models.FileField(upload_to='upload/berkas/', blank=True, null=True, verbose_name="Dokumen")
-    mk_tahun = models.IntegerField(null=True, default=0, verbose_name="Masa Kerja Tahun")
-    mk_bulan = models.IntegerField(null=True, default=0, verbose_name="Masa Kerja Bulan")
+    tanggal = models.DateField(default=2021-3-20, blank=True, null=True)
+    dokumen = models.FileField(upload_to='upload/berkas/', blank=True, null=True)
+    mk_tahun = models.IntegerField(null=True, default=0)
+    mk_bulan = models.IntegerField(null=True, default=0)
     dasarnominatif = models.BooleanField(null=True, default=False)
-    tglpenetapan = models.DateField(null=True, blank=True, verbose_name="Tanggal Penetapan")
+    tglpenetapan = models.DateField(null=True, blank=True)
     pejabat = models.CharField(max_length=50, null=True, blank=True, default="GUBERNUR JAMBI")
     
     class Meta:
@@ -104,7 +104,7 @@ class GajiModel(models.Model):
     terbilang = models.CharField(blank=True, null=True, max_length=255)
 
     def __str__(self):
-        return self.golongan
+        return self.terbilang
 
 class BerkalaHistoryModel(models.Model):
     username    = models.CharField(max_length=255, blank=True, null=True)
@@ -124,7 +124,7 @@ class BerkalaHistoryModel(models.Model):
     
     
     def __str__(self):
-        return self.golongan
+        return self.username
     
 
 class AkunModel(models.Model):
@@ -141,7 +141,7 @@ class AkunModel(models.Model):
     opd_akses = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
 
     def __unicode__(self):
-        return self.akun
+        return self.pegawai
 
 
 class ProsesBerkalaModel(models.Model):
@@ -165,7 +165,7 @@ class ProsesBerkalaModel(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True, default='nominatif')
 
     def __str__(self):
-        return self.pegawai
+        return self.status
 
 class NominatifxModels(models.Model):
     bahanchoice = (
@@ -187,7 +187,7 @@ class NominatifxModels(models.Model):
     bahan = models.CharField(max_length=20, choices=bahanchoice, blank=True)
     
     def __str__(self):
-        return self.pegawai
+        return self.bahan
 
 
 class NominatifSelesaiModels(models.Model):    
@@ -204,7 +204,7 @@ class NominatifSelesaiModels(models.Model):
     tmt_kgb = models.DateField(blank=True, null=True)
     
     def __str__(self):
-        return self.pegawai
+        return str(self.tmt_kgb)
 
 class NominatifTundaModel(models.Model):    
     golongan = models.ForeignKey('GolonganModel', models.DO_NOTHING, null=True, blank=True)
@@ -214,14 +214,14 @@ class NominatifTundaModel(models.Model):
     mk_bulan = models.IntegerField(blank=True, null=True)
     mkb_tahun = models.IntegerField(blank=True, null=True)
     mkb_bulan = models.IntegerField(blank=True, null=True)
-    pegawai = models.ForeignKey('PegawaiModel', models.DO_NOTHING, blank=True)
-    opd = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
+    pegawai = models.ForeignKey('PegawaiModel', models.DO_NOTHING, blank=True, verbose_name= 'Nama')
+    opd = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True, verbose_name='Unit Kerja')
     tanggal = models.DateTimeField(auto_now_add=timezone.now, blank=True)
-    tmt_kgb = models.DateField(blank=True, null=True)
-    keterangan = models.CharField(max_length=20, blank=True, null=True, default='-')
+    tmt_kgb = models.DateField(blank=True, null=True, verbose_name='TMT KGB')
+    keterangan = models.CharField(max_length=20, blank=True, null=True)
     
     def __str__(self):
-        return self.pegawai
+        return self.keterangan
 
 
 
