@@ -6,13 +6,11 @@
   <form action="{% url 'pegawai:nominatif'  %}" method="POST">
     {% csrf_token %}
     <input type="date" name ="tmtkgb" value="{{tmtkgb_date}}" >
-    {% comment %} <button class="btn">Cari</button> {% endcomment %}
-    <a class="btn btn-sm btn-info">Cari</a>
+    <button class="btn btn-sm btn-info">Cari Pegawai</button>
     <a href="{% url 'pegawai:listnominatifmanual'  %}" class="btn btn-sm btn-info">Nominatif Manual</a>
-  </form>
-  
-</div>
+  </form>  
 
+</div>
 <table class="table" >
     <thead class="thead-dark" >
       <tr>

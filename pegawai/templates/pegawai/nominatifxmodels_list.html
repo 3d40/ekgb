@@ -3,10 +3,10 @@
 
 <!-- search -->
 <div class="form-group">
-  <form action="#" method="POST">
+  <form action="" method="POST">
     {% csrf_token %}
     <input type="date" name ="tmtkgb" value="{{tmtkgb_date}}" >
-    <button class="btn">Cari</button>
+    <button class="btn btn-sm btn-info" >Cari</button>
   </form>
 </div>
 
@@ -55,12 +55,15 @@
           </div>
         </td>
         <td>
-          <a class="btn btn-sm btn-info"href="{%url 'pegawai:nominatifdetail' x.pegawai_id %}">Detail</a>
+          <a class="btn btn-sm btn-info" href="{%url 'pegawai:nominatifdetail' x.pegawai_id %}">Detail</a>
         </td>
       </tr>
         {% endfor %}
       </tbody>
+      <td>
+        <a class="btn btn-sm btn-info"href="{%url 'pegawai:cetaknominatif' %}">Cetak Daftar Nominatif</a>
+      </td>
   </table>
-  {% include 'paginator.html'  %}
+    {% include 'paginator.html'  %}
   {% endblock %}
         

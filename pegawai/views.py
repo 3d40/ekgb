@@ -896,14 +896,20 @@ def CetakDaftarNominatif(request):
     template_path = 'pegawai/cetaknominatif.html'
     # pegawai = get_object_or_404(PegawaiModel, id=id)
     nominatif = NominatifxModels.objects.filter(opd_id = opdakses)
-    context = {'nomintiflist': nominatif}
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="nominatif.pdf"'
-    template = get_template(template_path)
-    html = template.render(context)
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    for data in nominatif:
+        datapegawai = get_object_or_404(PegawaiModel, id = data.pegawai_id)
+        print(datapegawai.nip)
+        context = {
+            'nominatiflist': nominatif,
+            'datapegawai':datapegawai
+            }
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="nominatif.pdf"'
+        template = get_template(template_path)
+        html = template.render(context)
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
 # def TundaView(request, id):

@@ -104,7 +104,7 @@ class GajiModel(models.Model):
     terbilang = models.CharField(blank=True, null=True, max_length=255)
 
     def __str__(self):
-        return self.terbilang
+        return self.tbgaji_currency
 
 class BerkalaHistoryModel(models.Model):
     username    = models.CharField(max_length=255, blank=True, null=True)

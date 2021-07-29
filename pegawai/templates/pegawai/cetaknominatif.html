@@ -1,38 +1,37 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+  @page {
+    size: A4 landscape;
+    margin: 2cm;
+  }
+  </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Pemerintah Provinsi Jambi| e-KGB - BKD</title>
 </head>
+
 <body>
-    table class="table" >
-    <thead class="thead-dark" >
-      <tr>
-        <th scope="col" rowspan="2">Nomor</th>
-        <th scope="col" rowspan="2">NIP</th>
-        <th scope="col" rowspan="2">Nama</th>
-        <th scope="col" rowspan="2">Unit Kerja</th>
-        <tr>
-          <th>Pangkat</th>
-          <th>KGB</th>
-          <th>SKP</th>
-        </tr>
-        
-      </tr>
-    </thead>
-    <tbody>
-      
-        {% for x in nomintiflist %}
+        {% for x in nominatiflist %}
         <th scope="row" >{{forloop.counter}}</th>
         <td>{{x.pegawai}}</a></td>
-        <td>{{x.pegawai}}</a></td>
+        <td>{{datapegawai.nip}}</a></td>
         <td>{{x.opd}}</a></td>
+        <td>{{x.tmt_kgb}}</a></td>
+        <td>{{x.mk_tahun}}</a></td>
+        <td>{{x.mk_bulan}}</a></td>
+        <td>{{x.mkb_tahun}}</a></td>
+        <td>{{x.mkb_bulan}}</a></td>
+        <td>Rp. {{x.gaji|intcomma}}</a></td>
+
         {% endfor %}
-      </tbody>
-  </table>
+
+
+        
 </body>
 
 </html>
