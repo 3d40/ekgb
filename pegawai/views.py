@@ -111,11 +111,14 @@ def HitungPangkatView(request, id):
     request.session['username']
     opdakses = request.session['opd_akses']
     pegawai = get_object_or_404(PegawaiModel, id=id)
-    print(pegawai.id)
+    jenis = JabatanModel.objects.all()
+    print(pegawai.jenis_jabatan)
     context = {
-        'pegawai':pegawai
+        'pegawai':pegawai,
+        'jenis':jenis
         }  
     try:
+        
         pangkat = urlopen(urlpangkat + str(pegawai.id))
         json_pangkat = json.load(pangkat)
         # print(json_pangkat)
@@ -133,6 +136,8 @@ def HitungPangkatView(request, id):
                 nip=pegawai.nip, jenis=pkt['jenis'], 
                 tanggal=pkt['date'],
                 nomor_sk = pkt['name'])
+        pegawai.jenis_jabatan = request.POST.get('jenis')
+        pegawai.save()
     return render(request, template_name,context)
 
 
@@ -435,22 +440,25 @@ def ProsesBerkalaView(request, id):
     jarak = relativedelta(tmt_kgb, datagol.tanggal)
     mkbarutahun = jarak.years + datagol.mk_tahun
     mkbarubulan = jarak.months + datagol.mk_bulan
-    print(pegawai.opd_id, pegawai.golongan_id, gaji.id, pegawai.jabatan,datagol.mk_tahun, tmt_kgb, mkbarutahun, jarak.years, mkbarubulan, jarak.months)
+    print(pegawai.opd_id, pegawai.golongan_id, gaji.id, pegawai.jabatan,datagol.mk_tahun, tmt_kgb, mkbarutahun, jarak.years, mkbarubulan, jarak.months, pegawai.id)
     if mkbarubulan >= 12:
         mkbarubulan = mkbarubulan - 12
         mkbarutahun = mkbarutahun + 1
-    NominatifxModels.objects.get_or_create(
-        golongan_id=pegawai.golongan_id,
-        gaji_id=gaji.id,
-        jabatan=pegawai.jabatan,
-        mk_tahun=datagol.mk_tahun,
-        mk_bulan=datagol.mk_bulan,
-        mkb_tahun=mkbarutahun,
-        mkb_bulan=mkbarubulan,
-        pegawai_id=pegawai.id,
-        opd_id=pegawai.opd_id,
-        tmt_kgb=tmt_kgb,
-    )
+        if NominatifxModels.objects.filter(pegawai_id = pegawai.id).exists():
+            return HttpResponse( "Data sudah dalam daftar Usulan")
+        elif ProsesBerkalaModel.objects.filter(pegawai_id = pegawai.id).exists():
+            return HttpResponse( "Data Sedang dalam Proses")
+        else:
+            NominatifxModels.objects.get_or_create(
+                golongan_id=pegawai.golongan_id,
+                gaji_id=gaji.id,jabatan=pegawai.jabatan,
+                mk_tahun=datagol.mk_tahun, 
+                mk_bulan=datagol.mk_bulan,
+                mkb_tahun=mkbarutahun, 
+                mkb_bulan=mkbarubulan,
+                pegawai_id=pegawai.id, 
+                opd_id=pegawai.opd_id, 
+                tmt_kgb=tmt_kgb)
     return redirect('pegawai:nominatif')
 
 
@@ -911,25 +919,6 @@ def CetakDaftarNominatif(request):
         if pisa_status.err:
             return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
-
-# def TundaView(request, id):
-#     request.session['username']
-#     opdakses = request.session['opd_akses']
-#     data = get_object_or_404(PegawaiModel, id=id)
-#     gol = get_object_or_404(GolonganModel, id =data.golongan_id)
-#     pangkat = GolonganHistoryModel.objects.filter(pengguna=data.id, nama=data.golongan).first()
-#     print(pangkat, "SELESAI DETAIL")
-#     # pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
-#     nominatif = get_object_or_404(ProsesBerkalaModel, pegawai_id=data.id)
-#     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
-#     return render(request, "pegawai/tundadetail.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
-
-
-
-# def TundaViewProses(request):
-#     if request.method == 'POST':
-#         form = TundaForm(request.POST)
-#         if form.is_valid():
 
 
 def TundaView(request, id):
