@@ -14,6 +14,10 @@
                         <label class="form-control-label">NIP</label>
 						<input id="jnsjab" name="nip" class="form-control" value="{{pegawai.nip}}" readonly />
                     </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Tanggal Lahir</label>
+						<input id="tgllahir" name="tgllahir" class="form-control" value="{{pegawai.tgllahir}}" readonly />
+                    </div>
 				</div>
                 <div class="col-md-3">
                     <div class="form-group">
@@ -21,14 +25,9 @@
                         <input id="namaasn" name="nama" class="form-control" value="{{pegawai.nama}}" readonly />
                     </div>
                     <div>
-                        <form method = "post" action = "{% url 'pegawai:update' pegawai.id %}">
-                        {% csrf_token %}
-                        <label for="jenis" class="form-control-label">Jenis Jabatan :</label>
-                        <select name = "jenis"  class="form-control" >
-                            {% for jenis in jenis %}
-                            <option value="{{ jenis.id }}" selected="--Pilih Jabatan--" >{{ jenis.nama }}</option>
-                        {% endfor %} 
-                        </select>
+                        <label for="jabatan" class="form-control-label">Jenis Jabatan</label>
+                        <input id="jabatan" name="jabatan" class="form-control" value="{{pegawai.jabatan}}" readonly />
+                        <a class="btn btn-sm btn-info"href="{% url 'pegawai:editjabatan' pegawai.id %}">Edit Jabatan</a>
                     </div>
                     <!-- <div class="form-group">
                         <label class="form-control-label">Jenis Jabatan</label>
@@ -63,8 +62,8 @@
                         <input id="jnsklmn" name="jnsklmn" class="form-control" value="{{ pegawai.jenis_kelamin }}" readonly />
                     </div>  
                     <div class="form-group">
-                        <label for="tmt_pns" class="form-control-label">TMT PNS :</label>
-                        <input id="tmt_pns" name="tmt_pns" class="form-control" value="{{ pegawai.tmt_pns}}" readonly />
+                        <label for="tmt_pns" class="form-control-label">TMT CPNS :</label>
+                        <input id="tmt_pns" name="tmt_pns" class="form-control" value="{{ pegawai.tmt_cpns}}" readonly />
                     </div>
                     <div>
                     <td>

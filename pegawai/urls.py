@@ -51,7 +51,8 @@ urlpatterns = [
     
     path('pegawai/tunda/<int:id>', views.TundaView, name='tundaproses'),
     path('pegawai/tunda/delete/<int:id>', views.TundaDeleteView, name='tundadelete'),
-
+    
+    path('pegawai/jabatan/edit/<int:id>', views.EditJabatanView, name='editjabatan'),
     path('pegawai/cetakdaftarnominatif', views.CetakDaftarNominatif, name='cetaknominatif')
 
     ]

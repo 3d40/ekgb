@@ -3,7 +3,7 @@ from django.db.models.expressions import Value, ValueRange
 from django.db.models.fields import CharField
 from django.db.models.query import InstanceCheckMeta, QuerySet, ValuesListIterable
 from django.http.response import HttpResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
 from django.utils.timezone import now
 # from .forms import UserLoginForm
 from django.contrib.auth import (
@@ -35,6 +35,7 @@ from django.template.loader import get_template
 
 from socket import error as SocketError
 import errno
+
 # Create your views here.
 
 urlpegawai = 'http://103.146.244.150:8000/nip/?search='
@@ -111,12 +112,18 @@ def HitungPangkatView(request, id):
     request.session['username']
     opdakses = request.session['opd_akses']
     pegawai = get_object_or_404(PegawaiModel, id=id)
-    jenis = JabatanModel.objects.all()
-    print(pegawai.jenis_jabatan)
+    jab = get_object_or_404(JabatanModel, id = pegawai.jabatan_id)
+    tahun = int(pegawai.nip[0:4])
+    bulan = int(pegawai.nip[4:6])
+    tanggal = int(pegawai.nip[6:8]) 
+    lahir = datetime.date(tahun,bulan,tanggal)
+    pegawai.tgllahir = lahir
+    pegawai.save()
     context = {
         'pegawai':pegawai,
-        'jenis':jenis
+        'jab':jab
         }  
+    print(jab)
     try:
         
         pangkat = urlopen(urlpangkat + str(pegawai.id))
@@ -135,9 +142,8 @@ def HitungPangkatView(request, id):
                 nama_id=pkt['golongan_id_history'], 
                 nip=pegawai.nip, jenis=pkt['jenis'], 
                 tanggal=pkt['date'],
-                nomor_sk = pkt['name'])
-        pegawai.jenis_jabatan = request.POST.get('jenis')
-        pegawai.save()
+                nomor_sk = pkt['name']
+                )
     return render(request, template_name,context)
 
 
@@ -579,20 +585,32 @@ def LoadPegawaiView(request, id=None):
         pass # Handle error here.  
     data = json.load(openjson)
     for pegawai in data:
-        inputdata = PegawaiModel.objects.update_or_create(
-            id=pegawai['id'],
-            nama=pegawai['name'],
-            nip=pegawai['nip'],
-            pengguna=pegawai['user_id'],
-            golongan_id=pegawai['golongan_id'],
-            opd_id=pegawai['company_id'],
-            jenis_kelamin=pegawai['jenis_kelamin'],
-            tempat_lahir = pegawai['tempat_lahir'],
-            jabatan_data = pegawai['jabatan_data'],
-            jenis_jabatan = pegawai['jenis_jabatan'],
-            pddk_terakhir = pegawai['Level_Pendidikan'],
-            tmt_pns = pegawai['tmt_pns'],
-        )
+        try:
+            x =str(pegawai['nip'])
+            tahun = int(x[0:4])
+            bulan = int(x[4:6])
+            tanggal = int(x[6:8])
+            lahir = datetime.date(tahun, bulan, tanggal)
+            cpnstahun = datetime.date(int(x[8:12]), int(x[12:14]), 1)
+            print(cpnstahun)
+            inputdata = PegawaiModel.objects.update_or_create(
+                id=pegawai['id'],
+                nama=pegawai['name'],
+                nip=pegawai['nip'],
+                pengguna=pegawai['user_id'],
+                golongan_id=pegawai['golongan_id'],
+                opd_id=pegawai['company_id'],
+                jenis_kelamin=pegawai['jenis_kelamin'],
+                tempat_lahir = pegawai['tempat_lahir'],
+                jabatan_data = pegawai['jabatan_data'],
+                jenis_jabatan = pegawai['jenis_jabatan'],
+                pddk_terakhir = pegawai['Level_Pendidikan'],
+                tmt_pns = pegawai['tmt_pns'],
+                tmt_cpns = cpnstahun,
+                tgllahir = lahir
+            )
+        except :
+            pass
         cekdata = PegawaiModel.objects.exclude(
             nip__isnull=False).exclude(nip__exact="").delete()
     return redirect('pegawai:pegawai')
@@ -981,4 +999,19 @@ def TundaDeleteView(request, id):
 		return redirect("pegawai:tunda")
 	return render(request, "pegawai/delete_view.html", {'context':context, 'obj':obj})
 
-    
+
+def EditJabatanView(request, id):
+    template_name = 'pegawai/editjabatan.html'
+    obj = get_object_or_404(PegawaiModel, id = id)
+    jabatan = JabatanModel.objects.all().order_by('nama')
+    context = {
+        'obj':obj,
+        'jabatan':jabatan
+        }
+    if request.method =="POST":
+        jenis = request.POST.get('jenis')
+        print(jenis)
+        obj.jabatan_id = jenis
+        obj.save()
+        return redirect('pegawai:detail', obj.id)
+    return render(request, template_name, context)

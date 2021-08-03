@@ -68,3 +68,10 @@ class  TundaForm(forms.ModelForm):
         model = NominatifTundaModel
         fields = ['pegawai','opd','keterangan']
         # fields ='__all__'
+
+class JabatanForm(forms.ModelForm):
+
+    
+    class Meta:
+        model = PegawaiModel
+        fields = ['jenis_jabatan']

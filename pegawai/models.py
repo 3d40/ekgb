@@ -10,7 +10,7 @@ class PegawaiModel(models.Model):
         ('P', 'Perempuan')
     ]
     nama = models.CharField(max_length=100)
-    jabatan = models.ForeignKey('JabatanModel', models.DO_NOTHING, blank=True, null=True)
+    jabatan = models.ForeignKey('JabatanModel', models.DO_NOTHING, default='7', null=True)
     nip = models.CharField(max_length=100, null=True)
     opd = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
     golongan = models.ForeignKey('GolonganModel', models.DO_NOTHING, null=True, blank=True)
@@ -78,25 +78,13 @@ class OpdModel(models.Model):
         return self.nama
 
 class JabatanModel(models.Model):
-    pilihan_jenis = [
-        ('struktural', 'Struktural'),
-        ('jfu','Fungsional Umum'),
-        ('jft1', 'Ahli Pertma'),
-        ('jft2', 'Ahli Muda'),
-        ('jft3', 'Ahli Madya'),
-        ('jft4', 'Ahli Utama'),
-        ('jft5', 'Pelaksana Pemula'),
-        ('jft6', 'Pelaksana'),
-        ('jft7', 'Ahli Utama'),
-    ]
-    jenis = models.CharField(max_length=30, choices=pilihan_jenis, default='jfu')
-    nama = models.CharField(max_length=100)
+    jenis = models.CharField(max_length=20, blank=True, null=True, default='jfu')
+    nama = models.CharField(max_length=150, default="")
     bup = models.IntegerField()
     jenjang = models.CharField(max_length=15)
 
     def __str__(self):
         return self.nama
-
 class GajiModel(models.Model):
     masa_kerja = models.IntegerField()
     golongan = models.ForeignKey('GolonganModel', models.DO_NOTHING, blank=True, null=True)
