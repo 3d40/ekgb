@@ -817,13 +817,21 @@ def CetakBerkala(request, id):
     pangkat = GolonganHistoryModel.objects.filter( nama_id=pegawai.golongan, pengguna=pegawai.id).first()
     simbol = get_object_or_404(GolonganModel, id=pegawai.golongan_id)
     nominatif = get_object_or_404(NominatifSelesaiModels, pegawai_id=pegawai.id)
-    gajibaru = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
+    
     gajilama = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mk_tahun)
     opd = get_object_or_404(OpdModel, id=pegawai.opd_id)
     kgbnext = nominatif.tmt_kgb+relativedelta(years=+2)
     pensiun = get_object_or_404(JabatanModel, id = pegawai.jabatan_id)
     umur = relativedelta(kgbnext ,pegawai.tgllahir)
-    print(umur.years, umur.months, umur.days)
+    print(umur.years, umur.months, umur.days, pensiun.bup)
+    bup = relativedelta(months=0, years=pensiun.bup, days=0)
+    pensiun = umur.years > bup.years
+    try:
+        gajibaru= GajiModel.objects.get(golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
+        # gajibaru = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
+    except GajiModel.DoesNotExist:
+        gajibaru= "MAKSIMAL"
+
     # pensiun = get_object_or_404(JabatanModel, id = pegawai.jabatan)
     # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
     context = {
@@ -833,7 +841,8 @@ def CetakBerkala(request, id):
         'gajibaru': gajibaru, 
         'gajilama': gajilama, 
         'kgbnext': kgbnext, 
-        'simbol': simbol
+        'simbol': simbol,
+        'pensiun':pensiun,
         }
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="report.pdf"'

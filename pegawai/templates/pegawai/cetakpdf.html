@@ -255,7 +255,11 @@
             <td width=80 align=left></td>
             <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>10.&nbsp;&nbsp;Kenaikan gaji yang akan datang</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
+            {% if pensiun == True %}
+            <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;PENSIUN</font></td>
+            {% else %}
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{kgbnext}}</font></td>
+            {% endif %}
         </tr>
 
 
