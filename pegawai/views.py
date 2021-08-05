@@ -821,6 +821,10 @@ def CetakBerkala(request, id):
     gajilama = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mk_tahun)
     opd = get_object_or_404(OpdModel, id=pegawai.opd_id)
     kgbnext = nominatif.tmt_kgb+relativedelta(years=+2)
+    pensiun = get_object_or_404(JabatanModel, id = pegawai.jabatan_id)
+    umur = relativedelta(kgbnext ,pegawai.tgllahir)
+    print(umur.years, umur.months, umur.days)
+    # pensiun = get_object_or_404(JabatanModel, id = pegawai.jabatan)
     # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
     context = {
         'nominatif': nominatif, 
