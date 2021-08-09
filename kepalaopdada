@@ -778,7 +778,7 @@ ALTER SEQUENCE public.pegawai_nominatifxmodels_id_seq OWNED BY public.pegawai_no
 CREATE TABLE public.pegawai_opdmodel (
     id integer NOT NULL,
     nama character varying(255) NOT NULL,
-    kepala_opd integer,
+    kepala_opd_id integer,
     alamat character varying(255),
     email character varying(255),
     telpon character varying(255),
@@ -1171,10 +1171,10 @@ COPY public.auth_user (id, password, last_login, is_superuser, username, first_n
 4	pbkdf2_sha256$216000$inORUcE6JlEN$urJLczYdGKQiDovYS99JcpFLD9LHENUP9qo09g7sPOw=	2021-06-15 10:27:50.611924+07	f	kepegawaianpu				t	t	2021-03-24 09:29:45+07
 8	pbkdf2_sha256$216000$Jxejc3bUurZ9$ZorMOSBU610fxCFv02bYHFnydV8U4IM5wTNIhPd//to=	2021-08-05 10:49:05.75374+07	f	kepegawaianbpsdm	kepegawaianbpsdm	kepegawaianbpsdm	clonibug_cod@yahoo.com	t	t	2021-08-05 10:47:48+07
 6	pbkdf2_sha256$216000$KCujg4gRN4Ed$KTsaYlEwTpO7DrHzj1fw2qRl05WX3JluAoxcXjHKrbQ=	2021-06-30 08:34:08.550076+07	f	tubpbd	Badan Penanggulangan Bencana Daerah		asdasdasd@gmail.com	t	t	2021-06-30 08:30:22+07
-1	pbkdf2_sha256$216000$U5Evnakr5opE$G3Pgz4NA6K+aLz1CKxvzdqYIM63VpGom9zBgCGFs0LM=	2021-08-06 13:14:42.343185+07	t	admin			admin@gmail.com	t	t	2021-03-18 11:38:00.758325+07
 5	pbkdf2_sha256$216000$HFfxgPeeKuLI$56a2qSwwf+l5FNYRcXscvhY7Q9DQnxJ1v0BNl+yWv/g=	2021-06-16 15:30:32.327038+07	f	kominfo				t	t	2021-06-15 10:30:41+07
-2	pbkdf2_sha256$216000$gHPFk2VHMJup$1R3TeyDilGCGN8VQeadmlf7l79waez4mjB4yhX7cNw4=	2021-08-09 11:35:03.588784+07	f	kepegawaianbkd	Tata Usaha BKD		bkdjambi@jambiprov.go.id	t	t	2021-03-18 11:40:11+07
+1	pbkdf2_sha256$216000$U5Evnakr5opE$G3Pgz4NA6K+aLz1CKxvzdqYIM63VpGom9zBgCGFs0LM=	2021-08-09 12:57:25.770768+07	t	admin			admin@gmail.com	t	t	2021-03-18 11:38:00.758325+07
 7	pbkdf2_sha256$216000$i6aou71bUysS$OyHfzE6hhYxUmHm4nRMAs1jWoCI9PWE/L8WrRdRe7Mk=	2021-07-01 15:36:02.322914+07	f	tubpbdjambi				t	t	2021-07-01 12:02:25+07
+2	pbkdf2_sha256$216000$gHPFk2VHMJup$1R3TeyDilGCGN8VQeadmlf7l79waez4mjB4yhX7cNw4=	2021-08-09 13:01:07.257104+07	f	kepegawaianbkd	Tata Usaha BKD		bkdjambi@jambiprov.go.id	t	t	2021-03-18 11:40:11+07
 \.
 
 
@@ -1231,6 +1231,8 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 30	2021-08-05 10:47:48.757074+07	8	kepegawaianbpsdm	1	[{"added": {}}]	4	1
 31	2021-08-05 10:48:07.652835+07	8	kepegawaianbpsdm	2	[{"changed": {"fields": ["First name", "Last name", "Email address", "Staff status"]}}]	4	1
 32	2021-08-05 10:48:39.760211+07	8	AkunModel object (8)	1	[{"added": {}}]	16	1
+33	2021-08-09 12:20:59.203055+07	3	AkunModel object (3)	2	[{"changed": {"fields": ["Pegawai", "Jenis akun"]}}]	16	1
+34	2021-08-09 13:22:42.300633+07	937	Badan Kepegawaian Daerah	2	[{"changed": {"fields": ["Plt"]}}]	11	1
 \.
 
 
@@ -1315,6 +1317,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 47	pegawai	0002_auto_20210803_0909	2021-08-03 16:09:08.165548+07
 48	pegawai	0002_auto_20210805_0840	2021-08-05 15:40:12.383116+07
 49	pegawai	0003_auto_20210805_0840	2021-08-05 15:40:52.873312+07
+50	pegawai	0002_auto_20210809_0556	2021-08-09 12:56:59.017914+07
 \.
 
 
@@ -1324,7 +1327,8 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 la9ke2u1hh0p6ma5i7g3h3pff6ougner	.eJxVzE0OgyAQBeC7sDYG-RHosvuegQwwqKVFI5oumt69mLhx9zLvm_cl8xIspIKF3AxXDdkLrhneSG4k4YIDfGCC7FIgDbGwb6M9hJ1CBex6c-AT5qMIT8jD3Po5b-vk2oO0Z1vaxxzwdT_tZWCEMtZvpTGidlopzYykVMpIOVfRGM2wB9Mbr3gvQQhOha8oCu-xBipZ51xHfn8XKkXa:1lbdcf:IUOW9XZIvQyFeDrKb7reRNPjk62bSrTHWWSbhLKjQlo	2021-05-12 13:24:33.422603+07
-9jmtqdizm4w2cei6x47kwet0v4j4ucrm	.eJxVzD0OhCAQBeC7UBuDIAKW2-8ZzADjz7KCEc0WxrsvJjZ2k3nfeweJi-vAJ0yk1VwWZE-4BpiRtMTjggP8YIJgvCMF6WDfxu4S3eQyYM-fAesxXIH7QBhiaWPY1smUFynvNJXv6PD7uu1jYIQ05rZU2KMySkrFtKBUiJ5yLnutFcMGdKOt5I2Auua0thn1tbWYDypYZUyVR7d584Mh7XGef3VLSgU:1mCx0K:FFnUXGQgvhW2ppJzg0H-au32xeJOsT9waY300dUGwRo	2021-08-23 11:35:12.584013+07
+vqpjh7ks9ed5ey9d490t5ealooy54tam	.eJxVjMEOwiAQRP-FsyGACwWP3v0GsuyCVA1NSnsy_rtt0oMeZ96beYuI61Lj2vMcRxYXocXpt0tIz9x2wA9s90nS1JZ5THJX5EG7vE2cX9fD_Tuo2Ou2NmiLV2ghpJBNsZySB1DJKAiKSiC3hcxMzOjQGXB6cFTOg9eGAEF8vvCCOCc:1mCyHt:L4jbgpaxMB7eDK_igvYGPjxrIJgY4XtGuJWPSu1Itu8	2021-08-23 12:57:25.779464+07
+vxjtgg2vsyz87b6pmfqoyxrwq0qhk6u1	.eJxVzD0OhCAQBeC7UBuDIAKW2-8ZzADjz7KCEc0WxrsvJjZ2k3nfeweJi-vAJ0yk1VwWZE-4BpiRtMTjggP8YIJgvCMF6WDfxu4S3eQyYM-fAesxXIH7QBhiaWPY1smUFynvNJXv6PD7uu1jYIQ05rZU2KMySkrFtKBUiJ5yLnutFcMGdKOt5I2Auua0thn1tbWYDypYZUyVR7d584Mh7XGef3VLSgU:1mCynD:O4GVlptRymOkNsidDrfdGddTwjc0GWUFkj6sX2ZxleA	2021-08-23 13:29:47.539132+07
 \.
 
 
@@ -1339,7 +1343,7 @@ COPY public.pegawai_akunmodel (id, pegawai, jenis_akun, akun_id, opd_akses_id) F
 6	tubpbd	operatoropd	6	941
 7	admin	admin	7	1
 1	kepegawaianbkd	operatoropd	2	937
-3	kepegawaianpu	operatoropd	1	924
+3	admin	admin	1	924
 \.
 
 
@@ -1920,14 +1924,15 @@ COPY public.pegawai_gajimodel (id, masa_kerja, tbgaji_currency, terbilang, golon
 
 COPY public.pegawai_golonganhistorymodel (id, pengguna, nip, nomor_sk, jenis, tanggal, dokumen, nama_id, mk_bulan, mk_tahun, dasarnominatif, tglpenetapan, pejabat) FROM stdin;
 67284	50434	198504172010011003	821.12/792/BKD	pns	2011-09-01		20	8	4	f	\N	GUBERNUR JAMBI
+20137	50425	198501292011011007	xxx	pangkat_golongan	2015-04-01		23	3	4	f	\N	GUBERNUR JAMBI
 21311	50524	196508141986012001	823.2/102/UP	pangkat_golongan	1990-04-01		19	0	0	f	\N	GUBERNUR JAMBI
-64245	50425	198501292011011007	xxx	cpns	2011-01-01		22	0	0	f	\N	GUBERNUR JAMBI
 64246	50425	198501292011011007	xxx	pangkat_golongan	2018-04-01		24	3	7	f	\N	GUBERNUR JAMBI
 64247	50425	198501292011011007	xxx	pns	2012-01-01		22	0	1	f	\N	GUBERNUR JAMBI
+20140	50549	198605192010012011	521/KEP.GUB/BKD-4.1/2014	pangkat_golongan	2014-04-01		23	3	4	f	\N	GUBERNUR JAMBI
 25858	50497	196310021986031007	SK. 813/581	cpns	1986-03-01		32	0	0	f	\N	GUBERNUR JAMBI
 25859	50497	196310021986031007	SK. 821.11/399/1987	pns	1987-08-01		32	0	0	f	\N	GUBERNUR JAMBI
 25860	50497	196310021986031007	SK. 823.1/83/UP	pangkat_golongan	1990-04-01		33	0	0	f	\N	GUBERNUR JAMBI
-20137	50425	198501292011011007	xxx	pangkat_golongan	2015-04-01		23	3	4	f	\N	GUBERNUR JAMBI
+64245	50425	198501292011011007	xxx	cpns	2011-01-01		22	0	0	f	\N	GUBERNUR JAMBI
 25861	50497	196310021986031007	01-05/00004/KEP/X/1992	pangkat_golongan	1992-10-01		18	0	0	f	\N	GUBERNUR JAMBI
 25862	50497	196310021986031007	01-05/00031/KEP/X/1996	pangkat_golongan	1996-10-01		19	0	0	f	\N	GUBERNUR JAMBI
 37211	50434	198504172010011003	SK.813/125/BKD	cpns	2010-01-01		20	0	3	f	\N	GUBERNUR JAMBI
@@ -1945,25 +1950,24 @@ COPY public.pegawai_golonganhistorymodel (id, pengguna, nip, nomor_sk, jenis, ta
 21337	50463	198204022010012017	821/169/BKP2D	pns	2012-01-01		20	0	0	f	\N	GUBERNUR JAMBI
 21338	50463	198204022010012017	813/013/BKP2D	cpns	2010-01-01		20	0	0	f	\N	GUBERNUR JAMBI
 26605	50507	196403071990012002	477/KEP.GUB/BKD-4.1/2014	pangkat_golongan	2014-04-01		25	0	0	f	\N	GUBERNUR JAMBI
-20145	50536	197712212005011005	036/KEP.GUB/BKD-2.2/2017	pangkat_golongan	2016-04-01		25	0	0	f	\N	GUBERNUR JAMBI
-20228	50536	197712212005011005	314/KEP.GUB/BKD-4.1/2013	pangkat_golongan	2013-04-01		24	0	0	f	\N	GUBERNUR JAMBI
-20229	50536	197712212005011005	823/234/BKD	pangkat_golongan	2009-04-01		23	0	0	f	\N	GUBERNUR JAMBI
-20230	50536	197712212005011005	813/851/UP	pns	2006-04-01		22	0	0	f	\N	GUBERNUR JAMBI
 20231	50536	197712212005011005	813/851/UP	cpns	2005-01-01		22	0	0	f	\N	GUBERNUR JAMBI
+20230	50536	197712212005011005	813/851/UP	pns	2006-04-01		22	3	1	f	\N	GUBERNUR JAMBI
+20145	50536	197712212005011005	036/KEP.GUB/BKD-2.2/2017	pangkat_golongan	2016-04-01		25	3	11	f	\N	GUBERNUR JAMBI
+20229	50536	197712212005011005	823/234/BKD	pangkat_golongan	2009-04-01		23	3	4	f	\N	GUBERNUR JAMBI
+20228	50536	197712212005011005	314/KEP.GUB/BKD-4.1/2013	pangkat_golongan	2013-04-01		24	3	8	f	\N	GUBERNUR JAMBI
 28812	50481	196402141986031005	349/KEP.GUB/BKD-3.2/2017	pangkat_golongan	2018-10-01		27	0	0	f	\N	GUBERNUR JAMBI
 20176	74401	198612172011011003	481/KEP.GUB/BKD-4.1/2015	pangkat_golongan	2015-04-01		23	0	0	f	\N	GUBERNUR JAMBI
 20253	74401	198612172011011003	813/173/BKD	cpns	2011-01-01		22	0	0	f	\N	GUBERNUR JAMBI
 65287	74401	198612172011011003	1846/KEP.GUB/BKD-2.2/2019	pangkat_golongan	2019-05-01		24	0	0	f	\N	GUBERNUR JAMBI
-65327	50549	198605192010012011	1846/KEP.GUB/BKD-2.2/2019	pangkat_golongan	2019-04-01		24	3	9	f	\N	GUBERNUR JAMBI
 63784	50434	198504172010011003	1846/KEP.GUB/BKD-2.2/2019	pangkat_golongan	2019-04-01		22	3	7	f	2019-05-08	GUBERNUR JAMBI
 37210	50434	198504172010011003	521/KEP.GUB/BKD-4.1/2014	pangkat_golongan	2014-04-01		21	7	5	f	\N	GUBERNUR JAMBI
 21305	50524	196508141986012001	813.2/32	cpns	1986-01-01		18	0	0	f	\N	GUBERNUR JAMBI
-20140	50549	198605192010012011	521/KEP.GUB/BKD-4.1/2014	pangkat_golongan	2014-04-01		23	3	4	f	\N	GUBERNUR JAMBI
+20221	50549	198605192010012011	821.13/793/BKD	pns	2011-09-01		22	8	1	f	\N	GUBERNUR JAMBI
 21306	50524	196508141986012001	821.12/575	pns	1987-04-01		18	3	1	f	\N	GUBERNUR JAMBI
 21307	50524	196508141986012001	823.3/3150/UP	pangkat_golongan	2002-04-01		22	3	11	f	\N	GUBERNUR JAMBI
 21308	50524	196508141986012001	01-05/00138/KEP/IV/1994	pangkat_golongan	1994-04-01		20	3	8	f	\N	GUBERNUR JAMBI
-20221	50549	198605192010012011	821.13/793/BKD	pns	2011-09-01		22	8	1	f	\N	GUBERNUR JAMBI
 20222	50549	198605192010012011	SK. 813/125/BKD	cpns	2010-01-01		22	0	0	f	\N	GUBERNUR JAMBI
+65327	50549	198605192010012011	1846/KEP.GUB/BKD-2.2/2019	pangkat_golongan	2019-04-01		24	3	9	f	\N	GUBERNUR JAMBI
 21310	50524	196508141986012001	01-05/00001/KEP/IV/1998	pangkat_golongan	1998-04-01		21	3	12	f	\N	GUBERNUR JAMBI
 31944	73906	196312311984021002	812.533-2197	pangkat_golongan	1996-10-01		22	8	7	f	\N	GUBERNUR JAMBI
 31950	73906	196312311984021002	823/234/BKD	pangkat_golongan	2009-04-01		26	2	20	f	\N	GUBERNUR JAMBI
@@ -2037,6 +2041,9 @@ COPY public.pegawai_jabatanmodel (id, bup, jenjang, jenis, nama) FROM stdin;
 --
 
 COPY public.pegawai_nominatifselesaimodels (id, mk_tahun, mk_bulan, mkb_tahun, mkb_bulan, tanggal, tmt_kgb, gaji_id, golongan_id, jabatan_id, opd_id, pegawai_id) FROM stdin;
+67	7	3	10	0	2021-08-09 12:27:14.986556+07	2022-01-01	280	22	6	937	50434
+68	7	3	12	0	2021-08-09 12:44:18.074736+07	2023-01-01	348	24	9	937	50425
+69	11	3	18	0	2021-08-09 12:47:14.532524+07	2023-01-01	386	25	2	937	50536
 \.
 
 
@@ -2053,7 +2060,7 @@ COPY public.pegawai_nominatiftundamodel (id, mk_tahun, mk_bulan, mkb_tahun, mkb_
 --
 
 COPY public.pegawai_nominatifxmodels (id, mk_tahun, mk_bulan, mkb_tahun, mkb_bulan, tanggal, tmt_kgb, bahan, gaji_id, jabatan_id, pegawai_id, golongan_id, opd_id) FROM stdin;
-218	7	3	10	0	2021-08-09 11:35:12.540003+07	2022-01-01		280	6	50434	22	937
+221	9	3	12	0	2021-08-09 13:30:01.465624+07	2022-01-01		350	7	50549	24	937
 \.
 
 
@@ -2061,50 +2068,50 @@ COPY public.pegawai_nominatifxmodels (id, mk_tahun, mk_bulan, mkb_tahun, mkb_bul
 -- Data for Name: pegawai_opdmodel; Type: TABLE DATA; Schema: public; Owner: datainfo
 --
 
-COPY public.pegawai_opdmodel (id, nama, kepala_opd, alamat, email, telpon, website, operator_id, plt) FROM stdin;
-937	Badan Kepegawaian Daerah	50444	\N	\N	\N	\N	\N	f
-942	Badan Kesatuan Bangsa dan Politik	53060	\N	\N	\N	\N	\N	f
-933	Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu	53193	\N	\N	\N	\N	\N	f
-913	Inspektorat	53240	\N	\N	\N	\N	\N	f
-940	Badan Keuangan Daerah	53452	\N	\N	\N	\N	\N	f
-914	Dinas Pendidikan	68057	\N	\N	\N	\N	\N	f
-944	Rumah Sakit Umum Daerah Raden Mattaher Provinsi Jambi	73763	\N	\N	\N	\N	\N	f
-938	Badan Pengembangan Sumber Daya Manusia	73918	\N	\N	\N	\N	\N	f
-923	Dinas Sosial Kependudukan dan Pencatatan Sipil	78157	\N	\N	\N	\N	\N	f
-927	Dinas Koperasi Usaha Kecil dan Menengah	78158	\N	\N	\N	\N	\N	f
-941	Badan Penanggulangan Bencana Daerah	78166	\N	\N	\N	\N	\N	f
-939	Badan Penelitian dan Pengembangan Daerah	78261	\N	\N	\N	\N	\N	f
-943	Badan Penghubung Daerah Provinsi	78364	\N	\N	\N	\N	\N	f
-916	Dinas Kehutanan	79296	\N	\N	\N	\N	\N	f
-919	Dinas Kebudayaan dan Pariwisata	79501	\N	\N	\N	\N	\N	f
-945	Rumah Sakit Jiwa Daerah Provinsi Jambi	80382	\N	\N	\N	\N	\N	f
-926	Dinas Perindustrian dan Perdagangan	80920	\N	\N	\N	\N	\N	f
-934	Dinas Perhubungan	81118	\N	\N	\N	\N	\N	f
-930	Dinas Kelautan dan Perikanan	81467	\N	\N	\N	\N	\N	f
-912	Sekretariat DPRD	81719	\N	\N	\N	\N	\N	f
-928	Dinas Energi dan Sumber Daya Mineral	82997	\N	\N	\N	\N	\N	f
-929	Satuan Polisi Pamong Praja dan Pemadam Kebakaran	83798	\N	\N	\N	\N	\N	f
-918	Dinas Komunikasi dan Informatika	85020	\N	\N	\N	\N	\N	f
-932	Dinas Ketahanan Pangan	87054	\N	\N	\N	\N	\N	f
-931	Dinas Lingkungan Hidup	87069	\N	\N	\N	\N	\N	f
-1422	Dinas Pemberdayaan Perempuan Perlindungan Anak dan Pengendalian Penduduk	87095	\N	\N	\N	\N	\N	f
-922	Dinas Perkebunan	87169	\N	\N	\N	\N	\N	f
-925	Dinas Perpustakaan dan Arsip Daerah	87255	\N	\N	\N	\N	\N	f
-921	Dinas Tanaman Pangan Hortikultura dan Peternakan	87282	\N	\N	\N	\N	\N	f
-924	Dinas Pekerjaan Umum dan Perumahan Rakyat	87329	\N	\N	\N	\N	\N	f
-935	Dinas Tenaga Kerja dan Transmigrasi	87338	\N	\N	\N	\N	\N	f
-911	Sekretariat Daerah	88068	\N	\N	\N	\N	\N	f
-915	Dinas Kesehatan	88684	\N	\N	\N	\N	\N	f
-917	Dinas Kepemudaan dan Olahraga	88684	\N	\N	\N	\N	\N	f
-936	Badan Perencanaan dan Pembangunan Daerah	89169	\N	\N	\N	\N	\N	f
-1437	xxx	89169	\N	\N	\N	\N	\N	f
-1438	xxx	89169	\N	\N	\N	\N	\N	f
-1445	xxx	89169	\N	\N	\N	\N	\N	f
-1446	xxx	89169	\N	\N	\N	\N	\N	f
-1447	xxx	89169	\N	\N	\N	\N	\N	f
-1448	xxx	89169	\N	\N	\N	\N	\N	f
-1451	xxx	89169	\N	\N	\N	\N	\N	f
-1	ALL	0	\N	\N	\N	\N	\N	f
+COPY public.pegawai_opdmodel (id, nama, kepala_opd_id, alamat, email, telpon, website, operator_id, plt) FROM stdin;
+911	Sekretariat Daerah	88761	\N	\N	\N	\N	\N	f
+912	Sekretariat DPRD	88761	\N	\N	\N	\N	\N	f
+913	Inspektorat	88761	\N	\N	\N	\N	\N	f
+914	Dinas Pendidikan	88761	\N	\N	\N	\N	\N	f
+915	Dinas Kesehatan	88761	\N	\N	\N	\N	\N	f
+916	Dinas Kehutanan	88761	\N	\N	\N	\N	\N	f
+917	Dinas Kepemudaan dan Olahraga	88761	\N	\N	\N	\N	\N	f
+918	Dinas Komunikasi dan Informatika	88761	\N	\N	\N	\N	\N	f
+919	Dinas Kebudayaan dan Pariwisata	88761	\N	\N	\N	\N	\N	f
+921	Dinas Tanaman Pangan Hortikultura dan Peternakan	88761	\N	\N	\N	\N	\N	f
+922	Dinas Perkebunan	88761	\N	\N	\N	\N	\N	f
+923	Dinas Sosial Kependudukan dan Pencatatan Sipil	88761	\N	\N	\N	\N	\N	f
+924	Dinas Pekerjaan Umum dan Perumahan Rakyat	88761	\N	\N	\N	\N	\N	f
+925	Dinas Perpustakaan dan Arsip Daerah	88761	\N	\N	\N	\N	\N	f
+926	Dinas Perindustrian dan Perdagangan	88761	\N	\N	\N	\N	\N	f
+927	Dinas Koperasi Usaha Kecil dan Menengah	88761	\N	\N	\N	\N	\N	f
+928	Dinas Energi dan Sumber Daya Mineral	88761	\N	\N	\N	\N	\N	f
+929	Satuan Polisi Pamong Praja dan Pemadam Kebakaran	88761	\N	\N	\N	\N	\N	f
+930	Dinas Kelautan dan Perikanan	88761	\N	\N	\N	\N	\N	f
+931	Dinas Lingkungan Hidup	88761	\N	\N	\N	\N	\N	f
+932	Dinas Ketahanan Pangan	88761	\N	\N	\N	\N	\N	f
+933	Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu	88761	\N	\N	\N	\N	\N	f
+934	Dinas Perhubungan	88761	\N	\N	\N	\N	\N	f
+935	Dinas Tenaga Kerja dan Transmigrasi	88761	\N	\N	\N	\N	\N	f
+936	Badan Perencanaan dan Pembangunan Daerah	88761	\N	\N	\N	\N	\N	f
+938	Badan Pengembangan Sumber Daya Manusia	88761	\N	\N	\N	\N	\N	f
+939	Badan Penelitian dan Pengembangan Daerah	88761	\N	\N	\N	\N	\N	f
+940	Badan Keuangan Daerah	88761	\N	\N	\N	\N	\N	f
+941	Badan Penanggulangan Bencana Daerah	88761	\N	\N	\N	\N	\N	f
+942	Badan Kesatuan Bangsa dan Politik	88761	\N	\N	\N	\N	\N	f
+943	Badan Penghubung Daerah Provinsi	88761	\N	\N	\N	\N	\N	f
+944	Rumah Sakit Umum Daerah Raden Mattaher Provinsi Jambi	88761	\N	\N	\N	\N	\N	f
+945	Rumah Sakit Jiwa Daerah Provinsi Jambi	88761	\N	\N	\N	\N	\N	f
+1422	Dinas Pemberdayaan Perempuan Perlindungan Anak dan Pengendalian Penduduk	88761	\N	\N	\N	\N	\N	f
+1437	xxx	88761	\N	\N	\N	\N	\N	f
+1438	xxx	88761	\N	\N	\N	\N	\N	f
+1445	xxx	88761	\N	\N	\N	\N	\N	f
+1446	xxx	88761	\N	\N	\N	\N	\N	f
+1447	xxx	88761	\N	\N	\N	\N	\N	f
+1448	xxx	88761	\N	\N	\N	\N	\N	f
+1451	xxx	88761	\N	\N	\N	\N	\N	f
+1	ALL	88761	\N	\N	\N	\N	\N	f
+937	Badan Kepegawaian Daerah	88761	\N	\N	\N	\N	\N	t
 \.
 
 
@@ -2113,7 +2120,6 @@ COPY public.pegawai_opdmodel (id, nama, kepala_opd, alamat, email, telpon, websi
 --
 
 COPY public.pegawai_pegawaimodel (id, nama, nip, pengguna, alamat, telpon, gaji_skrg, tmt_cpns, fhoto, golongan_id, jabatan_id, opd_id, nominasi, jenis_kelamin, tempat_lahir, jabatan_data, jenis_jabatan, pddk_terakhir, tmt_pns, tgllahir) FROM stdin;
-50529	ANDANA ADYTIA KUSUMA	199212122014061001	49232			0	2014-06-01		23	7	937	f	L	Baturaja	Tugas Belajar	jfu	 	\N	1992-12-12
 50452	ANASTASIA ENDANG SRI SUKANINGSIH	196804151995102001	49155			0	1995-10-01		23	7	937	f	P	Magelang	Pengadministrasi Kepegawaian	jfu	D2	\N	1968-04-15
 50416	ARIANTY	197209072006042006	49119			0	2006-04-01		25	7	937	f	\N	\N	Analis Kepegawaian Muda	jft	S1	\N	1972-09-07
 50433	YESSY AMELIA PUTRIANA	198305062011012004	49136			0	2011-01-01		24	7	937	f	\N	\N	Analis Kepegawaian Muda	jft	\N	\N	1983-05-06
@@ -2162,7 +2168,7 @@ COPY public.pegawai_pegawaimodel (id, nama, nip, pengguna, alamat, telpon, gaji_
 50497	BUDI SARTONO	196310021986031007	49200			0	1986-03-01		25	7	937	f	L	Jambi	Penyusun Bahan Pembinaan Minat Dan Bakat	jfu	S1	\N	1963-10-02
 50466	EVARIYANTI	197506151995032001	49169			0	1995-03-01		23	7	937	f	P	Jambi	Pengelola Penilaian Kinerja Pegawai	jfu	S1	\N	1975-06-15
 92408	DIAH KURNIA SARI	198912022014032001	88880			0	2014-03-01		23	7	937	f	P	bangko	Analis Kepegawaian Pertama	jft	S 2	\N	1989-12-02
-50420	YANRIIL	197912132010011002	49123			0	2010-01-01		25	7	937	t	L	PADANG	Kepala Subbagian Perencanaan Badan Kepegawaian Daerah	struktural	Strata 2	\N	1979-12-13
+50529	ANDANA ADYTIA KUSUMA	199212122014061001	49232			0	2014-06-01		23	7	937	f	L	Baturaja	Tugas Belajar	jfu	 	\N	1992-12-12
 50430	SULISTIAWATI	196412291988112001	49133			0	1988-11-01		25	7	937	f	P	TANJUNG JABUNG BARAT	Arsiparis Penyelia	jft	SMAN	\N	1964-12-29
 50515	ASNAH	197602102007012002	49218			0	2007-01-01		24	7	937	f	P	Jambi	Arsiparis Muda	jft	S1	\N	1976-02-10
 50435	ISWENTO RIZKI MANA RISSAR RAJAGUKGUK	198610232010011005	49138			0	2010-01-01		22	7	937	t	\N	\N	Verifikator Data Laporan Keuangan	jfu	S1	\N	1986-10-23
@@ -2178,10 +2184,10 @@ COPY public.pegawai_pegawaimodel (id, nama, nip, pengguna, alamat, telpon, gaji_
 50459	NYIMAS ASNI	197502111997032005	49162			0	1997-03-01		24	7	937	f	P	Ds Teluk  Batanghari	Arsiparis Muda	jft	S1	\N	1975-02-11
 50439	FERY ANDIKA PUTRAWAN	198302282011011004	49142			0	2011-01-01		24	7	937	f	L	Jambi	Kepala Subbidang Pendidikan Pelatihan dan Sertifikasi Jabatan Badan Kepegawaian Daerah	struktural	\N	\N	1983-02-28
 74401	SIGIT EKA KARSA,	198612172011011003	71478			0	2011-01-01		24	9	937	f	L	Jambi	Pranata Komputer Muda	jft	Strata 2	\N	1986-12-17
-50425	EDO JEKTA FRIZA	198501292011011007	49128			0	2011-01-01		24	9	937	f	L	Lawang Agung	Pranata Komputer Muda	9	S1	\N	1985-01-29
-50498	FIRMAN KURNIAWAN	197802061998031002	49201			0	1998-03-01		26	7	937	f	L	Jambi	Kepala Bidang Pengembangan Aparatur Badan Kepegawaian Daerah	struktural	\N	\N	1978-02-06
 50536	TRI CAHYA CHRISTIANTO	197712212005011005	49239			0	2005-01-01		25	2	937	f	L	Curup	Kepala Subbidang Data dan Informasi Badan Kepegawaian Daerah	struktural	S1	\N	1977-12-21
+50498	FIRMAN KURNIAWAN	197802061998031002	49201			0	1998-03-01		26	7	937	f	L	Jambi	Kepala Bidang Pengembangan Aparatur Badan Kepegawaian Daerah	struktural	\N	\N	1978-02-06
 50507	AGUSTINI	196403071990012002	49210			0	1990-01-01		25	7	937	t	\N	\N	Arsiparis Muda	jft	\N	\N	1964-03-07
+50420	YANRIIL	197912132010011002	49123			0	2010-01-01		25	7	937	t	L	PADANG	Kepala Subbagian Perencanaan Badan Kepegawaian Daerah	struktural	Strata 2	\N	1979-12-13
 50461	MARDAYANI	197503071999032005	49164			0	1999-03-01		24	7	937	f	P	Teluk Singkawang	Pengelola Surat	jfu	S1	\N	1975-03-07
 50538	AMELIYA SRI WAHYUNI	198406072008012003	49241			0	2008-01-01		24	7	937	t	P	Kerinci	Kepala Subbidang Penghargaan Badan Kepegawaian Daerah	struktural	S1	\N	1984-06-07
 80727	SUSANTI	197601122011012004	77628			0	2011-01-01		21	7	937	f	P	JAMBI	Pengelola Barang Milik Negara	jfu	D3 	\N	1976-01-12
@@ -2189,7 +2195,6 @@ COPY public.pegawai_pegawaimodel (id, nama, nip, pengguna, alamat, telpon, gaji_
 50527	PRATITI WEDYANTI	196908061989022001	49230			0	1989-02-01		24	7	937	f	P	Jambi	Penyusun Rencana Mutasi	jfu	\N	\N	1969-08-06
 53468	M. SHOLIKUL HUDA	197704092010011008	51119			0	2010-01-01		25	7	937	t	L	Jepara	Kepala Subbidang Penilaian dan Evaluasi Kinerja Aparatur Badan Kepegawaian Daerah	struktural	S2	\N	1977-04-09
 92441	FITRI AMALIA	199602172017082001	88913			0	2017-08-01		22	7	937	f	\N	\N	Analis Sumber Daya Manusia Aparatur	jfu	\N	\N	1996-02-17
-50549	LINDA PUSPASARI	198605192010012011	49252			0	2010-01-01		24	7	937	t	P	Batanghari Lampung	Pranata Komputer Muda	jft	S1	\N	1986-05-19
 88669	INE SYAFRIKA	198012262009032001	85391			0	2009-03-01		25	7	937	f	P	jambi	Kepala Subbidang Pembinaan Jabatan Fungsional Badan Kepegawaian Daerah	struktural	\N	\N	1980-12-26
 50422	TOGU ULI PASARIBU	196610221989032004	49125			0	1989-03-01		23	7	937	f	\N	\N	Pengadministrasi Persuratan	jfu	Starata IV	\N	1966-10-22
 53155	SIGIT WAHYU WIDODO SUDARTO	198606222010011008	50812			0	2010-01-01		24	7	937	t	L	Jambi	Kepala Subbidang Pengadaan dan Pemberhentian Badan Kepegawaian Daerah	struktural	\N	\N	1986-06-22
@@ -2199,9 +2204,11 @@ COPY public.pegawai_pegawaimodel (id, nama, nip, pengguna, alamat, telpon, gaji_
 78398	SUHARYANTO	198301092006041002	75300			0	2006-04-01		24	7	937	f	L	Jakarta	Kepala Subbidang Mutasi Badan Kepegawaian Daerah	struktural	\N	\N	1983-01-09
 50434	TARMIDI	198504172010011003	49137			0	2010-01-01		22	6	937	t	L	Jakarta	Pranata Komputer Mahir	jft	D3 	\N	1985-04-17
 50531	EKA WINARNI	197408142000122003	49234			0	2000-12-01		25	7	937	f	P	BATANG ASAI, KAB. SAROLANGUN	Arsiparis Muda	jft	S1	\N	1974-08-14
-92386	FIRDAUS	197806172000121001	88862			0	2000-12-01		22	7	938	f	\N	\N	Bendahara	jfu	\N	\N	1978-06-17
 73872	PAHARI	197008101990031005	70974			0	1990-03-01		27	7	937	f	L	Kedotan	Kepala Bidang Mutasi dan Promosi Badan Kepegawaian Daerah	struktural	S1	\N	1970-08-10
+92386	FIRDAUS	197806172000121001	88862			0	2000-12-01		22	7	938	f	\N	\N	Bendahara	jfu	\N	\N	1978-06-17
+50425	EDO JEKTA FRIZA	198501292011011007	49128			0	2011-01-01		24	9	937	f	L	Lawang Agung	Pranata Komputer Muda	9	S1	\N	1985-01-29
 50485	DESSY MILAYATY, S.STP, MH	198112262000122001	49188			0	2000-12-01		26	7	937	f	P	Jambi	Kepala Bidang Pengadaan, Pemberhentian dan Informasi Kepegawaian Badan Kepegawaian Daerah	struktural	Strata 2	\N	1981-12-26
+50549	LINDA PUSPASARI	198605192010012011	49252			0	2010-01-01		24	7	937	t	P	Batanghari Lampung	Pranata Komputer Muda	jft	S1	\N	1986-05-19
 88786	OLSEN TIGER,SE,MM	197301252009031001	85455			0	2009-03-01		24	7	938	f	\N	\N	Kepala Subbag Program dan Pelaporan Badan Pengembangan Sumber Daya Manusia	struktural	\N	\N	1973-01-25
 53390	FATHIYAH	197402151998112001	51047			0	1998-11-01		26	7	938	f	P	Jambi	Widyaiswara Madya	jft	Strata 2	\N	1974-02-15
 83810	MUNAWAR ZULFIKAR	198403012012121001	80649			0	2012-12-01		23	7	938	f	L	Jambi	Pengelola Penyelenggaraan Diklat	jfu	S1 ILMU HUKUM	\N	1984-03-01
@@ -2296,8 +2303,8 @@ COPY public.pegawai_pegawaimodel (id, nama, nip, pengguna, alamat, telpon, gaji_
 88068	H.M. DIANTO	196101101985031005	84807			0	1985-03-01		30	3	938	f	\N	\N	Widyaiswara Utama	jft	\N	\N	1961-01-10
 73906	SULTAN	196312311984021002	71008			0	1984-02-01		28	4	938	f	L	Sulawesi Selatan	Widyaiswara Madya	jft	S2	\N	1963-12-31
 88761	H. APANI SAHARUDIN	196806031988101001	85435			0	1988-10-01		29	7	911	f	L	Muara Tembesi	Asisten Pemerintahan dan Kesejahteraan Rakyat	struktural	S1	\N	1968-06-03
-50524	GUSTINAR	196508141986012001	49227			0	1986-01-01		23	7	937	t	P	JAMBI	Pengadministrasi Kepegawaian	8	SMA	\N	1965-08-14
 50427	DWI MELVITASARI	198105282010012001	49130			0	2010-01-01		24	7	937	t	P	Bengkulu Selatan	Kepala Subbagian Keuangan Badan Kepegawaian Daerah	struktural	S1	\N	1981-05-28
+50524	GUSTINAR	196508141986012001	49227			0	1986-01-01		23	7	937	t	P	JAMBI	Pengadministrasi Kepegawaian	8	SMA	\N	1965-08-14
 \.
 
 
@@ -2355,7 +2362,7 @@ SELECT pg_catalog.setval('public.auth_user_user_permissions_id_seq', 1, false);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: datainfo
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 32, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 34, true);
 
 
 --
@@ -2369,7 +2376,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 19, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: datainfo
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 49, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 50, true);
 
 
 --
@@ -2425,7 +2432,7 @@ SELECT pg_catalog.setval('public.pegawai_jabatanmodel_id_seq', 16, true);
 -- Name: pegawai_nominatifselesaimodels_id_seq; Type: SEQUENCE SET; Schema: public; Owner: datainfo
 --
 
-SELECT pg_catalog.setval('public.pegawai_nominatifselesaimodels_id_seq', 66, true);
+SELECT pg_catalog.setval('public.pegawai_nominatifselesaimodels_id_seq', 69, true);
 
 
 --
@@ -2439,7 +2446,7 @@ SELECT pg_catalog.setval('public.pegawai_nominatiftundamodel_id_seq', 3, true);
 -- Name: pegawai_nominatifxmodels_id_seq; Type: SEQUENCE SET; Schema: public; Owner: datainfo
 --
 
-SELECT pg_catalog.setval('public.pegawai_nominatifxmodels_id_seq', 218, true);
+SELECT pg_catalog.setval('public.pegawai_nominatifxmodels_id_seq', 221, true);
 
 
 --
@@ -2460,7 +2467,7 @@ SELECT pg_catalog.setval('public.pegawai_pegawaimodel_id_seq', 1, true);
 -- Name: pegawai_prosesberkalamodel_id_seq; Type: SEQUENCE SET; Schema: public; Owner: datainfo
 --
 
-SELECT pg_catalog.setval('public.pegawai_prosesberkalamodel_id_seq', 72, true);
+SELECT pg_catalog.setval('public.pegawai_prosesberkalamodel_id_seq', 75, true);
 
 
 --
@@ -2928,6 +2935,13 @@ CREATE INDEX pegawai_nominatifxmodels_pegawai_id_eadd7b64 ON public.pegawai_nomi
 
 
 --
+-- Name: pegawai_opdmodel_kepala_opd_id_7a28529e; Type: INDEX; Schema: public; Owner: datainfo
+--
+
+CREATE INDEX pegawai_opdmodel_kepala_opd_id_7a28529e ON public.pegawai_opdmodel USING btree (kepala_opd_id);
+
+
+--
 -- Name: pegawai_opdmodel_operator_id_e6da600c; Type: INDEX; Schema: public; Owner: datainfo
 --
 
@@ -3212,6 +3226,14 @@ ALTER TABLE ONLY public.pegawai_nominatifxmodels
 
 ALTER TABLE ONLY public.pegawai_nominatifxmodels
     ADD CONSTRAINT pegawai_nominatifxmodels_opd_id_d10ed285_fk_pegawai_opdmodel_id FOREIGN KEY (opd_id) REFERENCES public.pegawai_opdmodel(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: pegawai_opdmodel pegawai_opdmodel_kepala_opd_id_7a28529e_fk_pegawai_p; Type: FK CONSTRAINT; Schema: public; Owner: datainfo
+--
+
+ALTER TABLE ONLY public.pegawai_opdmodel
+    ADD CONSTRAINT pegawai_opdmodel_kepala_opd_id_7a28529e_fk_pegawai_p FOREIGN KEY (kepala_opd_id) REFERENCES public.pegawai_pegawaimodel(id) DEFERRABLE INITIALLY DEFERRED;
 
 
 --
