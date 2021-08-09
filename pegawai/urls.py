@@ -53,6 +53,7 @@ urlpatterns = [
     path('pegawai/tunda/delete/<int:id>', views.TundaDeleteView, name='tundadelete'),
     
     path('pegawai/jabatan/edit/<int:id>', views.EditJabatanView, name='editjabatan'),
-    path('pegawai/cetakdaftarnominatif', views.CetakDaftarNominatif, name='cetaknominatif')
+    path('pegawai/cetakdaftarnominatif', views.CetakDaftarNominatif, name='cetaknominatif'),
+    path('pegawai/addpegawai/', views.AddPegawaiView, name='addpegawai')
 
     ]

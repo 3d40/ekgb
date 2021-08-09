@@ -35,6 +35,9 @@ from django.template.loader import get_template
 
 from socket import error as SocketError
 import errno
+import roman
+from datetime import date
+
 
 # Create your views here.
 
@@ -817,7 +820,6 @@ def CetakBerkala(request, id):
     pangkat = GolonganHistoryModel.objects.filter( nama_id=pegawai.golongan, pengguna=pegawai.id).first()
     simbol = get_object_or_404(GolonganModel, id=pegawai.golongan_id)
     nominatif = get_object_or_404(NominatifSelesaiModels, pegawai_id=pegawai.id)
-    
     gajilama = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mk_tahun)
     opd = get_object_or_404(OpdModel, id=pegawai.opd_id)
     kgbnext = nominatif.tmt_kgb+relativedelta(years=+2)
@@ -830,10 +832,14 @@ def CetakBerkala(request, id):
         gajibaru= GajiModel.objects.get(golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
         # gajibaru = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mkb_tahun)
     except GajiModel.DoesNotExist:
-        gajibaru= "MAKSIMAL"
+        kgbnext= "MAKSIMAL"
 
     # pensiun = get_object_or_404(JabatanModel, id = pegawai.jabatan)
     # kepelaopd = get_object_or_404(PegawaiModel, id=opd.kepala_opd)
+    rom = roman.toRoman((nominatif.tanggal).month)
+    rim = (nominatif.tanggal).year
+    tanggal = datetime.datetime.strftime(nominatif.tanggal, "%d %B %Y")
+    print(tanggal)
     context = {
         'nominatif': nominatif, 
         'data': pegawai, 
@@ -843,6 +849,9 @@ def CetakBerkala(request, id):
         'kgbnext': kgbnext, 
         'simbol': simbol,
         'pensiun':pensiun,
+        'rom':rom,
+        'rim':rim,
+        'tanggal':tanggal
         }
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="report.pdf"'
@@ -1028,3 +1037,47 @@ def EditJabatanView(request, id):
         obj.save()
         return redirect('pegawai:detail', obj.id)
     return render(request, template_name, context)
+
+
+def AddPegawaiView (request):
+    pegawai = PegawaiModel.objects.all()
+    if request.method == 'POST':
+        nip = request.POST.get('nip')
+        try:
+            openjson = urlopen(urlpegawai+ nip)
+        except SocketError as e:
+            if e.errno != errno.ECONNRESET:
+                raise # Not error we are looking for
+            pass # Handle error here. 
+        data = json.load(openjson)
+        x = data[0]
+        print(x['nip'],x['company_id'],x['name'])
+        addpegawai = pegawai.filter( id =x['id'])
+        if addpegawai.exists():
+            return HttpResponse("data sudah ada")
+        else:
+            y =str(x['nip'])
+            tahun = int(y[0:4])
+            bulan = int(y[4:6])
+            tanggal = int(y[6:8])
+            lahir = datetime.date(tahun, bulan, tanggal)
+            cpnstahun = datetime.date(int(y[8:12]), int(y[12:14]), 1)
+            print(cpnstahun)
+            inputdata = PegawaiModel.objects.update_or_create(
+                id=x['id'],
+                nama=x['name'],
+                nip=x['nip'],
+                pengguna=x['user_id'],
+                golongan_id=x['golongan_id'],
+                opd_id=x['company_id'],
+                jenis_kelamin=x['jenis_kelamin'],
+                tempat_lahir = x['tempat_lahir'],
+                jabatan_data = x['jabatan_data'],
+                jenis_jabatan = x['jenis_jabatan'],
+                pddk_terakhir = x['Level_Pendidikan'],
+                tmt_pns = x['tmt_pns'],
+                tmt_cpns = cpnstahun,
+                tgllahir = lahir
+            )
+            return HttpResponse("Berhasil Add Pegawai")
+    return render(request,'admin/addpegawai.html')

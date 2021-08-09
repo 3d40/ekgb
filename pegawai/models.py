@@ -73,6 +73,8 @@ class OpdModel(models.Model):
     telpon = models.CharField(max_length=255, null=True, blank=True)
     email = models.CharField(max_length=255, null=True, blank=True)
     website = models.CharField(max_length=255, null=True, blank=True)
+    operator = models.ForeignKey('AkunModel', models.DO_NOTHING, null=True, blank=True, default=1)
+    plt =models.BooleanField(default=False)
     
     def __str__(self):
         return self.nama
@@ -129,7 +131,7 @@ class AkunModel(models.Model):
     opd_akses = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
 
     def __unicode__(self):
-        return self.pegawai
+        return self.jenis_akun 
 
 
 class ProsesBerkalaModel(models.Model):
