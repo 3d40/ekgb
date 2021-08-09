@@ -6,8 +6,8 @@
   <style>
   @page {
     size: 21cm 33cm ;
-    margin: 1cm;
-    th.besar {text-tranform:uppercase}
+    margin: 2cm;
+    spacing: 2cm;
   }
   </style>
     <meta charset="UTF-8">
@@ -62,14 +62,10 @@
       <th>4</th>
       <th>5</th>
     </thead>
-    
-    <tbody>
+    <tbody >
         {% for x in nominatiflist %}
-        <th>{{forloop.counter}}</th>
-        <td>
-          {{x.pegawai}}</a><br>
-          NIP. {{datapegawai.nip}}
-        </td>
+        <td align="center">{{forloop.counter}}</td>
+        <td>{{x.pegawai}}<br>NIP. {{datapegawai.nip}}</td>
         <td align="center">{{datapegawai.golongan}}&nbsp;&nbsp;{{simbol}} </a></td>
         <td align="center">{{datapegawai.jabatan}}</a></td>
         <td align="center">{{x.tmt_kgb}}</a></td>
@@ -83,7 +79,11 @@
     <th width= 30 ></th>
     <th width= 50 ></th>
     <th width= 80 ></th>
+    {% if cekplt is True %} 
+      <th align=right>Plt.&nbsp;</th>
+    {% else %}
     <th></th>
+    {% endif %}
     <th align=left class= besar ><font  style=font-size:8pt >Kepala {{datapegawai.opd}} </font></th>
   </thead>
 
@@ -132,21 +132,21 @@
     <th width= 50 ></th>
     <th width= 80 ></th>
     <th></th>
-    <th align=left style=text-indent> NAMA KEPALA OPD</th>
+    <th align=left style=text-indent><u>{{kepalaopd.nama}}</u></th>
   </thead>
   <thead class="thead-dark">
     <th width= 30 ></th>
     <th width= 50 ></th>
     <th width= 80 ></th>
     <th></th>
-    <th align=left style=text-indent>GOLONGAN RUANG OPD</th>
+    <th align=left style=text-indent>{{kepalaopd.golongan}}</th>
   </thead>
   <thead class="thead-dark">
     <th width= 30 ></th>
     <th width= 50 ></th>
     <th width= 80 ></th>
     <th></th>
-    <th align=left style=text-indent>NIP. KEPALA OPD</th>
+    <th align=left style=text-indent>NIP. {{kepalaopd.nip}}</th>
   </thead>
 
  </table>

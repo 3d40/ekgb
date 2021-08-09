@@ -45,9 +45,9 @@ urlpatterns = [
     path('pangkat/<int:id>', views.Hitungmasakerja, name='pangkat'),
     path('pegawai/opdlist/', views.OpdListView.as_view(), name='opd'),
     path('pegawai/opdlist/<int:id>', views.LoadPegawaiView, name='loadpegawai'),
-    path('pegawai/all/', views.PegawaiAll.as_view(), name='adminpegawai'),
-    path('pegawai/all/proses/', views.ProsesBerkalaPegawaiAll.as_view(), name='adminproses'),
-    path('pegawai/all/nominatif/', views.NominatifBerkalaPegawaiAll.as_view(), name='adminnominatif'),
+    # path('pegawai/all/', views.PegawaiAll.as_view(), name='adminpegawai'),
+    # path('pegawai/all/proses/', views.ProsesBerkalaPegawaiAll.as_view(), name='adminproses'),
+    # path('pegawai/all/nominatif/', views.NominatifBerkalaPegawaiAll.as_view(), name='adminnominatif'),
     
     path('pegawai/tunda/<int:id>', views.TundaView, name='tundaproses'),
     path('pegawai/tunda/delete/<int:id>', views.TundaDeleteView, name='tundadelete'),
