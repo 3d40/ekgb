@@ -1,5 +1,6 @@
 from django import  forms
 from django.contrib.auth import authenticate
+from django.db.models import fields
 from django.db.models.fields import DateField
 from django.forms import widgets
 from .models import *
@@ -71,7 +72,11 @@ class  TundaForm(forms.ModelForm):
 
 class JabatanForm(forms.ModelForm):
 
-    
     class Meta:
         model = PegawaiModel
         fields = ['jenis_jabatan']
+
+class UploadfileForm(forms.ModelForm):
+    class Meta:
+        model = GolonganHistoryModel
+        fields = ['gambar']

@@ -52,7 +52,7 @@ class GolonganHistoryModel(models.Model):
     nomor_sk = models.CharField(max_length=150, null=True,blank=True, default="S-10225/BKD-2.2/")
     jenis = models.CharField(max_length=50, null=True, blank=True)
     tanggal = models.DateField(default=2021-3-20, blank=True, null=True)
-    dokumen = models.FileField(upload_to='upload/berkas/', blank=True, null=True)
+    gambar = models.FileField(upload_to='upload/berkas/', blank=True, null=True)
     mk_tahun = models.IntegerField(null=True, default=0)
     mk_bulan = models.IntegerField(null=True, default=0)
     dasarnominatif = models.BooleanField(null=True, default=False)
@@ -75,9 +75,6 @@ class OpdModel(models.Model):
     website = models.CharField(max_length=255, null=True, blank=True)
     operator = models.ForeignKey('AkunModel', models.DO_NOTHING, null=True, blank=True, default=1)
     plt =models.BooleanField(default=False)
-
-    class Meta:
-        managed=True,
     
     def __str__(self):
         return self.nama
@@ -134,7 +131,7 @@ class AkunModel(models.Model):
     opd_akses = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
 
     def __unicode__(self):
-        return self.jenis_akun 
+        return self.pegawai 
 
 
 class ProsesBerkalaModel(models.Model):
@@ -195,6 +192,7 @@ class NominatifSelesaiModels(models.Model):
     opd = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
     tanggal = models.DateTimeField(auto_now_add=timezone.now, blank=True)
     tmt_kgb = models.DateField(blank=True, null=True)
+    qrcode = models.ImageField(upload_to='qrbarcode/', null=True, blank=True)
     
     def __str__(self):
         return str(self.tmt_kgb)

@@ -3,6 +3,7 @@ from . import views
 from .models import PegawaiModel
 from django.views.generic import ListView
 
+
 app_name = 'pegawai'
 urlpatterns = [
     path('', views.LoginView, name='login'),
@@ -17,6 +18,7 @@ urlpatterns = [
     
     path('pegawai/daftarnominatif', views.NominatifViews, name='nominatif'),
     path('pegawai/daftarnominatif/list', views.NominatifList.as_view(), name='nominatiflist'),
+    path('pegawai/daftarnominatif/list/hapus/<int:id>', views.HapusNominatif, name='delnominatif'),
     path('pegawai/daftarnominatif/detail/<int:id>', views.NominatifDetailView, name='nominatifdetail'),
     path('pegawai/daftarnominatif/proses/<int:id>/manual', views.ProsesManualNominatif, name='prosesnominatifmanual'),
 
@@ -29,6 +31,7 @@ urlpatterns = [
     path('pegawai/daftarnominatif/manual/cari', views.CariManualNominatif, name='carinominatifmanual'),
     
     path('pegawai/riwayatpangkat/<str:nip>', views.RiwayatPangkatView, name='riwayatpangkat'),    
+    # path('pegawai/riwayatpangkat/upload/<int:id>', views.UploadBerkasView, name='uploadberkas'),
     
     path('pegawai/prosesberkala/', views.ProsesBerkalaList.as_view(), name='berkalalist'),
     path('pegawai/prosesberkala/<int:id>', views.ProsesBerkalaView, name='prosesnominatif'), #Input Ke Nominatifxmodel 
@@ -54,6 +57,8 @@ urlpatterns = [
     
     path('pegawai/jabatan/edit/<int:id>', views.EditJabatanView, name='editjabatan'),
     path('pegawai/cetakdaftarnominatif', views.CetakDaftarNominatif, name='cetaknominatif'),
-    path('pegawai/addpegawai/', views.AddPegawaiView, name='addpegawai')
+    path('pegawai/addpegawai/', views.AddPegawaiView, name='addpegawai'),
 
     ]
+    
+    

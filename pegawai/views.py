@@ -48,6 +48,8 @@ urlpangkat = 'http://103.146.244.150:8000/riwayatpangkat/?search='
 
 
 def LoginView(request):
+    if request.user.is_authenticated:
+        return redirect('pegawai:index')
     if request.POST:
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
@@ -235,13 +237,21 @@ def CariView(request):
     opdakses = request.session['opd_akses']
     queryset = PegawaiModel.objects.all()
     user = User.objects.get(username= userdata)
+    akun = get_object_or_404(AkunModel, akun_id= user.id )
+    opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
     cari = request.GET.get('search', '')
     if cari is not None and cari != '':
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             caripegawai = PegawaiModel.objects.filter(nama__icontains=cari)
             return render(request, 'pegawai/caripegawai_list.html', {'object_list': caripegawai})
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True: 
-            caripegawai = PegawaiModel.objects.filter(opd_id=opdakses, nama__icontains=cari)
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True: 
+            caripegawai = PegawaiModel.objects.filter(opd_id=akun.opd_akses_id, nama__icontains=cari)
+            return render(request, 'pegawai/caripegawai_list.html', {'object_list': caripegawai})
+        elif opdakses == 'operator':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True: 
+            caripegawai = PegawaiModel.objects.filter(opd_id__in=list(opdnya), nama__icontains=cari)
             return render(request, 'pegawai/caripegawai_list.html', {'object_list': caripegawai})
     else:
         return redirect('pegawai:pegawai')
@@ -249,14 +259,17 @@ def CariView(request):
 
 
 def NominatifViews(request):
+    userdata = request.session['username']
+    user = User.objects.get(username= userdata)
     tmtkgb_post = request.POST.get('tmtkgb', {})
     request.session['tmtkgb'] = tmtkgb_post
-    request.session['username']
     opdakses = request.session['opd_akses']
+    akun = get_object_or_404(AkunModel, akun_id= user.id )
+    opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
     pangkat = GolonganHistoryModel.objects.filter(jenis='cpns')
     # cari TMT_CPNS\
     if request.method == 'POST':
-        pegawai = PegawaiModel.objects.filter(opd_id=opdakses)
+        pegawai = PegawaiModel.objects.filter(opd_id=akun.opd_akses_id)
         jumlah = len(pegawai)
         for x in pegawai:
             tahun = int(x.nip[8:12])
@@ -280,7 +293,7 @@ class NominatifList(ListView):
     template_name = 'pegawai/nominatiflist.html'
     paginate_by = 25
 
-    def get_queryset(self,):
+    def get_queryset(self):
         userdata = self.request.session['username']
         user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
@@ -502,7 +515,7 @@ def ProsesBerkalaView(request, id):
             return HttpResponse( "Data sudah dalam daftar Usulan")
         elif ProsesBerkalaModel.objects.filter(pegawai_id = pegawai.id).exists():
             return HttpResponse( "Data Sedang dalam Proses")
-        else:
+        elif mkbarutahun % 2 == 0 and mkbarubulan == 0 :
             NominatifxModels.objects.get_or_create(
                 golongan_id=pegawai.golongan_id,
                 gaji_id=gaji.id,jabatan=pegawai.jabatan,
@@ -513,6 +526,14 @@ def ProsesBerkalaView(request, id):
                 pegawai_id=pegawai.id, 
                 opd_id=pegawai.opd_id, 
                 tmt_kgb=tmt_kgb)
+        else:
+            return HttpResponse("Hitung Otomatis terdapat kesalahan, silahkan hitung dengan Nominatif manual")
+    return redirect('pegawai:nominatif')
+
+
+def HapusNominatif(request, id):
+    hapus = get_object_or_404(NominatifxModels, id = id)
+    hapus.delete()
     return redirect('pegawai:nominatif')
 
 
@@ -832,7 +853,7 @@ class NominatifManuallist(ListView):
             queryset = PegawaiModel.objects.all()
         elif opdakses == 'operatoropd':
         # elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
-            queryset = PegawaiModel.objects.filter(opd_id =opdakses)
+            queryset = PegawaiModel.objects.filter(opd_id =akun.opd_akses_id)
         elif opdakses == 'operator':
             queryset = PegawaiModel.objects.filter(opd_id__in=list(opdnya))
         else:
