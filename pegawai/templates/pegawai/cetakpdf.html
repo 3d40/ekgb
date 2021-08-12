@@ -119,29 +119,29 @@
     <table border=0 cellspacing=0 cellpadding=0>
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>1.&nbsp;&nbsp;Nama</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>1.&nbsp;&nbsp;Nama</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{data.nama}}</font></td>
         </tr>
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>2.&nbsp;&nbsp;NIP/Tempat/Tanggal Lahir</font></td>
+            <td width=200 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>2.&nbsp;&nbsp;NIP/Tempat/Tanggal Lahir</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
-            <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{data.nip}}/{{data.tempat_lahir}}, {{data.tgllahir}}</font></td>
+            <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{data.nip}}/{{data.tempat_lahir}}, {{data.tgllahir|date:"d-m-Y"}}</font></td>
         </tr>
 
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>3.&nbsp;&nbsp;Pangkat/Golongan</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>3.&nbsp;&nbsp;Pangkat/Golongan</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{data.golongan}}/({{simbol.simbol}})</font></td>
         </tr>
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>3.&nbsp;&nbsp;Unit Kerja</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>3.&nbsp;&nbsp;Unit Kerja</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{data.opd}}</font></td>
         </tr>
@@ -149,7 +149,7 @@
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>5.&nbsp;&nbsp;Gaji Pokok Lama</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>5.&nbsp;&nbsp;Gaji Pokok Lama</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;Rp. {{gajilama.tbgaji_currency|intcomma}}</font></td>
         </tr>
@@ -169,14 +169,14 @@
     <table border=0 cellspacing=0 cellpadding=0>
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>a.&nbsp;&nbsp;Oleh Pejabat</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>a.&nbsp;&nbsp;Oleh Pejabat</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;Gubernur Jambi</font></td>
         </tr>
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>b.&nbsp;&nbsp;Tanggal</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>b.&nbsp;&nbsp;Tanggal</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{pangkat.tglpenetapan}}</font></td>
         </tr>
@@ -184,7 +184,7 @@
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>c.&nbsp;&nbsp;Nomor</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>c.&nbsp;&nbsp;Nomor</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{pangkat.nomor_sk}}</font></td>
         </tr>
@@ -192,14 +192,14 @@
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>d.&nbsp;&nbsp;Tanggal mulai berlakunya gaji tersebut</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>d.&nbsp;&nbsp;Tanggal mulai berlakunya gaji tersebut</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{pangkat.tanggal}}</font></td>
         </tr>
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>e.&nbsp;&nbsp;Masa kerja golongan pada tanggal tersebut</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>e.&nbsp;&nbsp;Masa kerja golongan pada tanggal tersebut</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{nominatif.mk_tahun}} Tahun {{nominatif.mk_bulan}} Bulan</font></td>
         </tr>
@@ -219,41 +219,41 @@
     <table border=0 cellspacing=0 cellpadding=0>
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>6.&nbsp;&nbsp;Gaji Pokok Baru</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>6.&nbsp;&nbsp;Gaji Pokok Baru</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;Rp. {{gajibaru.tbgaji_currency|intcomma}}</font></td>
         </tr>
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000></font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000></font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000></font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>({{gajibaru.terbilang}})</font></td>
         </tr>
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>7.&nbsp;&nbsp;Berdasarkan Masa Kerja</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>7.&nbsp;&nbsp;Berdasarkan Masa Kerja</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{nominatif.mkb_tahun}} Tahun {{nominatif.mkb_bulan}} Bulan</font></td>
 
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>8.&nbsp;&nbsp;Dalam Golongan</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>8.&nbsp;&nbsp;Dalam Golongan</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{data.golongan}}/({{simbol.simbol}})</font></td>
         </tr>
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>9.&nbsp;&nbsp;Mulai Tanggal</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>9.&nbsp;&nbsp;Mulai Tanggal</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;{{nominatif.tmt_kgb}}</font></td>
         </tr>
 
         <tr height=10>
             <td width=80 align=left></td>
-            <td width=240 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>10.&nbsp;&nbsp;Kenaikan gaji yang akan datang</font></td>
+            <td width=215 align=left bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>10.&nbsp;&nbsp;Kenaikan gaji yang akan datang</font></td>
             <td width=9 align=center bgcolor=#ffffff><font style=font-size:10pt face="arial narrow" color=#000000>:</font></td>
             {% if pensiun == True %}
             <td align=left bgcolor=#ffffff><font style=font-size:10pt face="arial" color=#000000>&nbsp;PENSIUN</font></td>
@@ -277,37 +277,41 @@
 
     <table border=0 cellspacing=0 cellpadding=0>
         <tr height=10>
-            <td width=430 align=left> <br></td>
+            <td width=430 align=left></td>
             <td width=315  bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000>a.n. GUBERNUR JAMBI</font>
+                <b><font style=font-size:10pt face="arial narrow" color=#000000>a.n. GUBERNUR JAMBI</font></b>
             </td>
         </tr>
     </table>
     <table border=0 cellspacing=0 cellpadding=0>
         <tr height=10>
-            <td width=430 align=left> <br></td>
+            {% if  cekplt is True %}
+            <td width=430 align=right><b><font style=font-size:10pt face="arial narrow" color=#000000>Plt.&nbsp;</b></font></td>
+            {% else %}
+            <td width=430 align=left></td>
+            {% endif %}
             <td width=270 bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000> KEPALA BADAN,</font>
+                <b><font style=font-size:10pt face="arial narrow" color=#000000> KEPALA BADAN,</font></b>
             </td>
         </tr>
     </table>
     <br /><br /><br /></br>
     <table border=0 cellspacing=0 cellpadding=0>
         <tr height=9>
-            <td width=430 align=left> <br></td>
+            <td width=430 align=left></td>
             <td width=270 bgcolor=#ffffff><b><u>
-                <font style=font-size:10pt face="arial narrow" color=#000000>{{kepalaopd.nama}}</font></b></u></td>
+                <font style=font-size:10pt face="arial narrow" color=#000000>{{kepalabkd.nama}}</font></b></u></td>
         </tr>
         <tr height=9>
-            <td width=430 align=left> <br></td>
+            <td width=430 align=left></td>
             <td width=270 bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000>{{kepalaopd.golongan}}</font>
+                <font style=font-size:10pt face="arial narrow" color=#000000>{{kepalabkd.golongan}}</font>
             </td>
         </tr>
         <tr height=9>
-            <td width=430 align=left> <br></td>
+            <td width=430 align=left></td>
             <td width=270 bgcolor=#ffffff>
-                <font style=font-size:10pt face="arial narrow" color=#000000> NIP. {{kepalaopd.nip}}</font>
+                <font style=font-size:10pt face="arial narrow" color=#000000> NIP. {{kepalabkd.nip}}</font>
             </td>
         </tr>
     </table>
@@ -324,6 +328,7 @@
                 <font style=font-size:9pt face="arial narrow" color=#000000>5. Kepala Kantor Cabang PT.Taspen (Persero) Jambi</font><br />
                 <font style=font-size:9pt face="arial narrow" color=#000000>6. Bendaharawan Gaji Pegawai Yang Bersangkutan</font><br />
                 <font style=font-size:9pt face="arial narrow" color=#000000>7. Yang Bersangkutan</font><br />
+                <font style=font-size:9pt face="arial narrow" color=#000000>8. --- ARSIP ---</font><br />
             </td>
         </tr>
     </table>

@@ -43,8 +43,13 @@
                         <input id="tmtpns" name="skpd" class="form-control" value="{{gaji.tbgaji_currency}} ( {{gaji.terbilang}} )" readonly />
                     </div>
                     <td>
+                        {% if opdakses == "operator" or opdakses == "admin" %}
                         <a class="btn btn-sm btn-info"href="{%url 'pegawai:CetakBerkala' data.id %}">Cetak</a>
-                      </td>
+                        <a class="btn btn-sm btn-info"href="{%url 'pegawai:selesai' %}">Kembali</a>
+                        {% else %}
+                        <a class="btn btn-sm btn-info"href="{%url 'pegawai:selesai' %}">Kembali</a>
+                        {% endif %}
+                    </td>
                 </div>
                 <div class="col-md-12">
                     <hr>

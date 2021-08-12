@@ -37,6 +37,7 @@ from socket import error as SocketError
 import errno
 import roman
 from datetime import date
+from django.core import serializers
 
 
 # Create your views here.
@@ -50,8 +51,8 @@ def LoginView(request):
     if request.POST:
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
-            akun = AkunModel.objects.get(akun_id=user.id)
-            request.session['opd_akses'] = akun.opd_akses.id
+            akun = AkunModel.objects.get(id =user.id)
+            opdakses = request.session['opd_akses'] = akun.jenis_akun
             if user.is_active:
                 try:
                     request.session['username'] = request.POST['username']
@@ -78,8 +79,12 @@ def IndexView(request):
     userdata = request.session['username']
     user = User.objects.get(username= userdata)
     opdakses = request.session['opd_akses']
-    print(userdata, user.is_active, user.is_staff, user.is_superuser)
-    if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+    akun = get_object_or_404(AkunModel, akun_id= user.id )
+    opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
+    print(list(opdnya))
+    if opdakses == 'admin' :
+        print(userdata, user.is_active, user.is_staff, user.is_superuser, akun.jenis_akun, akun.opd_akses)
+    # if user.is_superuser == True and user.is_staff == True and user.is_active == True :
         pegawai = PegawaiModel.objects.all()
         disetujui = NominatifxModels.objects.all()
         diproses = ProsesBerkalaModel.objects.all()
@@ -92,12 +97,27 @@ def IndexView(request):
         tunda = len(pending)
         context = {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses, 'tunda':tunda}
         return render(request, 'pegawai/dahsboard.html', context)
-    elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
-        pegawai = PegawaiModel.objects.filter(opd_id = opdakses)
-        disetujui = NominatifxModels.objects.filter(opd = opdakses)
-        diproses = ProsesBerkalaModel.objects.filter(opd = opdakses)
-        finish = NominatifSelesaiModels.objects.filter(opd = opdakses) 
-        pending = NominatifTundaModel.objects.filter(opd = opdakses)
+    elif opdakses == 'operatoropd':
+    # elif akun.jenis_akun == 'operatoropd' and user.is_superuser == False and user.is_staff == True and user.is_active == True:
+        pegawai = PegawaiModel.objects.filter(opd_id= akun.opd_akses_id)
+        disetujui = NominatifxModels.objects.filter(opd = akun.opd_akses_id)
+        diproses = ProsesBerkalaModel.objects.filter(opd = akun.opd_akses_id)
+        finish = NominatifSelesaiModels.objects.filter(opd = akun.opd_akses_id) 
+        pending = NominatifTundaModel.objects.filter(opd = akun.opd_akses_id)
+        jumlah = len(pegawai)
+        usulan = len(disetujui)
+        selesai = len(finish)
+        proses = len(diproses)
+        tunda = len(pending)
+        context = {'pegawai': pegawai, 'jumlah': jumlah, 'usulan': usulan, 'selesai': selesai, 'proses':proses, 'tunda':tunda}
+        return render(request, 'pegawai/dahsboard.html', context)
+    elif opdakses == 'operator':
+    # elif akun.jenis_akun == 'operator' and user.is_superuser == False and user.is_staff == True and user.is_active == True:
+        pegawai = PegawaiModel.objects.filter(opd_id__in= list(opdnya))
+        disetujui = NominatifxModels.objects.filter(opd__in = list(opdnya))
+        diproses = ProsesBerkalaModel.objects.filter(opd__in = list(opdnya))
+        finish = NominatifSelesaiModels.objects.filter(opd__in = list(opdnya)) 
+        pending = NominatifTundaModel.objects.filter(opd__in = list(opdnya))
         jumlah = len(pegawai)
         usulan = len(disetujui)
         selesai = len(finish)
@@ -139,13 +159,27 @@ def HitungPangkatView(request, id):
         pass # Handle error here
     else:
         for pkt in json_pangkat:
-            GolonganHistoryModel.objects.filter(pengguna=pegawai.id).update_or_create(
-                id=pkt['id'], 
-                pengguna=pkt['partner'], 
-                nama_id=pkt['golongan_id_history'], 
-                nip=pegawai.nip, jenis=pkt['jenis'], 
-                tanggal=pkt['date'],
-                nomor_sk = pkt['name']
+            datapkt = GolonganHistoryModel.objects.filter(pengguna=pegawai.id).exists()
+            print(datapkt)
+            if datapkt is True:
+                updatenya = GolonganHistoryModel.objects.get(id = pkt['id'])
+                updatenya.id=pkt['id'] 
+                updatenya.pengguna=pkt['partner'] 
+                updatenya.nama_id=pkt['golongan_id_history']
+                updatenya.nip=pegawai.nip
+                updatenya.jenis=pkt['jenis'] 
+                updatenya.tanggal=pkt['date']
+                updatenya.nomor_sk = pkt['name']
+                updatenya.save()
+            else:
+                GolonganHistoryModel.objects.update_or_create(
+                    id=pkt['id'],
+                    pengguna=pkt['partner'],
+                    nama_id=pkt['golongan_id_history'],
+                    nip=pegawai.nip,
+                    jenis=pkt['jenis'],
+                    tanggal=pkt['date'],
+                    nomor_sk = pkt['name'],
                 )
     return render(request, template_name,context)
 
@@ -168,11 +202,17 @@ class Pegawai(ListView):
         userdata = self.request.session['username']
         user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
+        akun = get_object_or_404(AkunModel, akun_id= user.id )
+        opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
         print(userdata, user.is_active, user.is_staff, user.is_superuser)
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             queryset = PegawaiModel.objects.all()
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
-            queryset = PegawaiModel.objects.filter(opd_id =opdakses)
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+            queryset = PegawaiModel.objects.filter(opd_id =akun.opd_akses_id)
+        elif opdakses == 'operator':
+            queryset = PegawaiModel.objects.filter(opd_id__in=list(opdnya))
 
         else:
             raise ImproperlyConfigured(
@@ -244,11 +284,17 @@ class NominatifList(ListView):
         userdata = self.request.session['username']
         user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
+        akun = get_object_or_404(AkunModel, akun_id= user.id )
+        opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
         print(userdata, user.is_active, user.is_staff, user.is_superuser)
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             queryset = NominatifxModels.objects.all()
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
-            queryset = NominatifxModels.objects.filter(opd_id =opdakses)
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+            queryset = NominatifxModels.objects.filter(opd_id =akun.opd_akses_id)
+        elif opdakses == 'operator':
+            queryset = NominatifxModels.objects.filter(opd_id__in=list(opdnya))
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
@@ -376,7 +422,6 @@ def Hitungmasakerja(request, id):
                             pangkatgolongan.mk_bulan = bulanlebih
                             pangkatgolongan.mk_tahun = pangkatgolongan.mk_tahun + 1
                             pangkatgolongan.save()
-
         elif cpnscek.nama_id == 18:
             cpnscek.mk_tahun = 0
             cpnscek.mk_bulan = 0
@@ -507,6 +552,9 @@ def CariManualNominatif(request):
     opdakses = request.session['opd_akses']
     queryset = PegawaiModel.objects.all()
     user = User.objects.get(username= userdata)
+    akun = get_object_or_404(AkunModel, akun_id= user.id )
+    opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
+    print(list(opdnya))
     cari = request.GET.get('search', '')
     if cari is not None and cari != '':
     #     caripegawai = PegawaiModel.objects.filter(
@@ -514,12 +562,18 @@ def CariManualNominatif(request):
     # else:
     #     return redirect('pegawai:pegawai')
     # return render(request, 'pegawai/nominatifmanuallist.html', {'object_list': caripegawai})
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             caripegawai = PegawaiModel.objects.filter(nama__icontains=cari)
             return render(request, 'pegawai/nominatifmanuallist.html', {'object_list': caripegawai})
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True: 
-            caripegawai = PegawaiModel.objects.filter(opd_id=opdakses, nama__icontains=cari)
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True: 
+            caripegawai = PegawaiModel.objects.filter(opd_id=akun.opd_akses_id, nama__icontains=cari)
             return render(request, 'pegawai/nominatifmanuallist.html', {'object_list': caripegawai})
+        elif opdakses == 'operator':
+            caripegawai = PegawaiModel.objects.filter(opd_id__in=list(opdnya), nama__icontains=cari)
+            return render(request, 'pegawai/nominatifmanuallist.html', {'object_list': caripegawai})
+        
         else:
             return redirect('pegawai:pegawai')
     return render(request, 'pegawai/nominatifmanuallist.html', {'object_list': caripegawai})
@@ -674,11 +728,17 @@ class SelesaiList(ListView):
         userdata = self.request.session['username']
         user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
+        akun = get_object_or_404(AkunModel, akun_id= user.id )
+        opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
         print(userdata, user.is_active, user.is_staff, user.is_superuser)
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             queryset = NominatifSelesaiModels.objects.all()
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
-            queryset = NominatifSelesaiModels.objects.filter(opd_id =opdakses)
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+            queryset = NominatifSelesaiModels.objects.filter(opd_id =akun.opd_akses_id)
+        elif opdakses == 'operator':
+            queryset = NominatifSelesaiModels.objects.filter(opd_id__in=list(opdnya))
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
@@ -764,18 +824,24 @@ class NominatifManuallist(ListView):
         userdata = self.request.session['username']
         user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
+        akun = get_object_or_404(AkunModel, akun_id= user.id )
+        opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
         print(userdata, user.is_active, user.is_staff, user.is_superuser)
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             queryset = PegawaiModel.objects.all()
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
             queryset = PegawaiModel.objects.filter(opd_id =opdakses)
+        elif opdakses == 'operator':
+            queryset = PegawaiModel.objects.filter(opd_id__in=list(opdnya))
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
                 "%(cls)s.model, %(cls)s.queryset, or override "
                 "%(cls)s.get_queryset()." % {
                     'cls': self.__class__.__name__
-                }
+                }and user.is_staff
             )
         ordering = self.get_ordering()
         if ordering:
@@ -793,11 +859,17 @@ class ProsesBerkalaList(ListView):
         userdata = self.request.session['username']
         user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
+        akun = get_object_or_404(AkunModel, akun_id= user.id )
+        opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
         print(userdata, user.is_active, user.is_staff, user.is_superuser)
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             queryset = ProsesBerkalaModel.objects.all()
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
-            queryset = ProsesBerkalaModel.objects.filter(opd_id =opdakses)
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+            queryset = ProsesBerkalaModel.objects.filter(opd_id =akun.opd_akses_id)
+        elif opdakses == 'operator':
+            queryset = ProsesBerkalaModel.objects.filter(opd_id__in=list(opdnya))
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
@@ -836,9 +908,10 @@ def CetakDetail(request, id):
     # pangkat = get_object_or_404(GolonganHistoryModel, pengguna=data.id, nama=data.golongan)
     nominatif = get_object_or_404(NominatifSelesaiModels, pegawai_id=data.id)
     gaji = get_object_or_404(GajiModel, id=nominatif.gaji_id)
-    return render(request, "pegawai/selesaidetail.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji})
+    return render(request, "pegawai/selesaidetail.html", {'pangkat': pangkat,  'data': data, 'nom': nominatif, 'gaji': gaji, 'opdakses':opdakses})
 
 def CetakBerkala(request, id):
+    opdakses = request.session['opd_akses']
     template_path = 'pegawai/cetakpdf.html'
     pegawai = get_object_or_404(PegawaiModel, id=id)
     pangkat = GolonganHistoryModel.objects.filter( nama_id=pegawai.golongan, pengguna=pegawai.id).first()
@@ -846,12 +919,12 @@ def CetakBerkala(request, id):
     nominatif = get_object_or_404(NominatifSelesaiModels, pegawai_id=pegawai.id)
     gajilama = get_object_or_404(GajiModel, golongan_id=pegawai.golongan, masa_kerja=nominatif.mk_tahun)
     opd = get_object_or_404(OpdModel, id=pegawai.opd_id)
-    kepalaopd = get_object_or_404(PegawaiModel, id = opd.kepala_opd_id)
-
+    bkd = get_object_or_404(OpdModel, id = 937 )
+    kepalbkd = get_object_or_404(PegawaiModel, id = bkd.kepala_opd_id)
     kgbnext = nominatif.tmt_kgb+relativedelta(years=+2)
     pensiun = get_object_or_404(JabatanModel, id = pegawai.jabatan_id)
     umur = relativedelta(kgbnext ,pegawai.tgllahir)
-    print(umur.years, umur.months, umur.days, pensiun.bup)
+    print(umur.years, umur.months, umur.days, pensiun.bup, bkd.kepala_opd, opdakses)
     bup = relativedelta(months=0, years=pensiun.bup, days=0)
     pensiun = umur.years > bup.years
     try:
@@ -865,8 +938,8 @@ def CetakBerkala(request, id):
     rom = roman.toRoman((nominatif.tanggal).month)
     rim = (nominatif.tanggal).year
     tanggal = datetime.datetime.strftime(nominatif.tanggal, "%d %B %Y")
-    cekplt = opd.plt
-    print(tanggal, kepalaopd.golongan, cekplt)
+    cekplt = bkd.plt
+    print(tanggal, cekplt, bkd.kepala_opd_id)
     context = {
         'nominatif': nominatif, 
         'data': pegawai, 
@@ -879,7 +952,9 @@ def CetakBerkala(request, id):
         'rom':rom,
         'rim':rim,
         'tanggal':tanggal,
-        'kepalaopd':kepalaopd
+        'kepalabkd':kepalbkd,
+        'cekplt':cekplt,
+        'opdakses':opdakses
         }
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="report.pdf"'
@@ -918,11 +993,17 @@ class ProsesBerkalaPegawaiAll(ListView):
         userdata = self.request.session['username']
         user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
+        akun = get_object_or_404(AkunModel, akun_id= user.id )
+        opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
         print(userdata, user.is_active, user.is_staff, user.is_superuser)
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             queryset = ProsesBerkalaModel.objects.all()
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
             queryset = ProsesBerkalaModel.objects.filter(opd_id =opdakses)
+        elif opdakses == 'operator':
+            queryset = ProsesBerkalaModel.objects.filter(opd_id__in=list(opdnya))
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "
@@ -948,11 +1029,16 @@ class NominatifTunda(ListView):
         userdata = self.request.session['username']
         user = User.objects.get(username= userdata)
         opdakses = self.request.session['opd_akses']
-        print(userdata, user.is_active, user.is_staff, user.is_superuser)
-        if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
+        akun = get_object_or_404(AkunModel, akun_id= user.id )
+        opdnya = OpdModel.objects.filter(operator_id=akun.akun_id).values_list('id', flat=True)
+        if opdakses == 'admin':
+        # if user.is_superuser == True and user.is_staff == True and user.is_active == True and AkunModel.objects.get(opd_akses_id = 1):
             queryset = NominatifTundaModel.objects.all()
-        elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
-            queryset = NominatifTundaModel.objects.filter(opd_id =opdakses)
+        elif opdakses == 'operatoropd':
+        # elif user.is_superuser == False and user.is_staff == True and user.is_active == True:
+            queryset = NominatifTundaModel.objects.filter(opd_id =akun.opd_akses_id)
+        elif opdakses == 'operator':
+            queryset = NominatifTundaModel.objects.filter(opd_id__in =list(opdnya))
         else:
             raise ImproperlyConfigured(
                 "%(cls)s is missing a QuerySet. Define "

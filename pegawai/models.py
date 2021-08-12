@@ -75,6 +75,9 @@ class OpdModel(models.Model):
     website = models.CharField(max_length=255, null=True, blank=True)
     operator = models.ForeignKey('AkunModel', models.DO_NOTHING, null=True, blank=True, default=1)
     plt =models.BooleanField(default=False)
+
+    class Meta:
+        managed=True,
     
     def __str__(self):
         return self.nama

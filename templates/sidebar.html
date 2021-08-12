@@ -8,16 +8,6 @@
                      <i class="icon icon-screen-desktop"></i> Dashboard
                     </a>
                 </li>
-                <!-- <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="icon icon-chart"></i> Riwayat KGB
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="icon icon-graph"></i> Riwayat Pangkat
-                    </a>
-                </li> -->
             {% endif %}
 
             {%if user.is_authenticated and user.is_staff %}
@@ -31,6 +21,7 @@
                         <i class="icon icon-user-following"></i> Buat Daftar Nominatif
                     </a>
                 </li>
+
                 <li class="nav-item nav-dropdown">
                     <a href="#" class="nav-link nav-dropdown-toggle">
                         <i class="icon icon-refresh"></i> Proses KGB <i class="fa fa-caret-left"></i>
@@ -66,6 +57,11 @@
                 </li>
 
             {% endif %}
+            
+
+
+
+
             {%if user.is_authenticated and user.is_superuser %}
             <li class="nav-item">
                 <a href='#' class="nav-link">
