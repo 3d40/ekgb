@@ -1,5 +1,5 @@
 from django.db.models import query
-from django.db.models.expressions import Value, ValueRange
+from django.db.models.expressions import Exists, Value, ValueRange
 from django.db.models.fields import CharField
 from django.db.models.query import InstanceCheckMeta, QuerySet, ValuesListIterable
 from django.http.response import HttpResponse
@@ -161,20 +161,18 @@ def HitungPangkatView(request, id):
         pass # Handle error here
     else:
         for pkt in json_pangkat:
-            datapkt = GolonganHistoryModel.objects.filter(pengguna=pegawai.id).exists()
-            print(datapkt)
-            if datapkt is True:
-                updatenya = GolonganHistoryModel.objects.get(id = pkt['id'])
-                updatenya.id=pkt['id'] 
-                updatenya.pengguna=pkt['partner'] 
-                updatenya.nama_id=pkt['golongan_id_history']
-                updatenya.nip=pegawai.nip
-                updatenya.jenis=pkt['jenis'] 
-                updatenya.tanggal=pkt['date']
-                updatenya.nomor_sk = pkt['name']
-                updatenya.save()
+            if GolonganHistoryModel.objects.filter(pengguna=pegawai.id, id= pkt['id']).exists():
+                    updatenya = GolonganHistoryModel.objects.get(id = pkt['id'])
+                    updatenya.id=pkt['id'] 
+                    updatenya.pengguna=pkt['partner'] 
+                    updatenya.nama_id=pkt['golongan_id_history']
+                    updatenya.nip=pegawai.nip
+                    updatenya.jenis=pkt['jenis'] 
+                    updatenya.tanggal=pkt['date']
+                    updatenya.nomor_sk = pkt['name']
+                    updatenya.save()
             else:
-                GolonganHistoryModel.objects.update_or_create(
+                GolonganHistoryModel.objects.filter(pengguna=pegawai.id).create(
                     id=pkt['id'],
                     pengguna=pkt['partner'],
                     nama_id=pkt['golongan_id_history'],
@@ -507,18 +505,18 @@ def ProsesBerkalaView(request, id):
     jarak = relativedelta(tmt_kgb, datagol.tanggal)
     mkbarutahun = jarak.years + datagol.mk_tahun
     mkbarubulan = jarak.months + datagol.mk_bulan
-    print(pegawai.opd_id, pegawai.golongan_id, gaji.id, pegawai.jabatan,datagol.mk_tahun, tmt_kgb, mkbarutahun, jarak.years, mkbarubulan, jarak.months, pegawai.id)
+    usulan =  NominatifxModels.objects.filter(pegawai_id = pegawai.id)
+    proses = ProsesBerkalaModel.objects.filter(pegawai_id = pegawai.id)
+
+    print(pegawai.opd_id, pegawai.golongan_id, gaji.id, pegawai.jabatan,datagol.mk_tahun, tmt_kgb, mkbarutahun, jarak.years, mkbarubulan, jarak.months) 
     if mkbarubulan >= 12:
         mkbarubulan = mkbarubulan - 12
         mkbarutahun = mkbarutahun + 1
-        if NominatifxModels.objects.filter(pegawai_id = pegawai.id).exists():
-            return HttpResponse( "Data sudah dalam daftar Usulan")
-        elif ProsesBerkalaModel.objects.filter(pegawai_id = pegawai.id).exists():
-            return HttpResponse( "Data Sedang dalam Proses")
-        elif mkbarutahun % 2 == 0 and mkbarubulan == 0 :
-            NominatifxModels.objects.get_or_create(
-                golongan_id=pegawai.golongan_id,
-                gaji_id=gaji.id,jabatan=pegawai.jabatan,
+        if mkbarutahun % 2 == 0 and mkbarubulan == 0 and usulan.exists() == False and proses.exists() == False:
+            NominatifxModels.objects.create(
+                golongan_id=pegawai.golongan_id, 
+                gaji_id=gaji.id,
+                jabatan=pegawai.jabatan, 
                 mk_tahun=datagol.mk_tahun, 
                 mk_bulan=datagol.mk_bulan,
                 mkb_tahun=mkbarutahun, 
@@ -526,8 +524,13 @@ def ProsesBerkalaView(request, id):
                 pegawai_id=pegawai.id, 
                 opd_id=pegawai.opd_id, 
                 tmt_kgb=tmt_kgb)
+        elif usulan.exists() == True:
+            return HttpResponse('Data sudah diusulkan..!!!')
+        elif proses.exists() == True:
+            return HttpResponse('Data sedang diproses..!!!')
         else:
             return HttpResponse("Hitung Otomatis terdapat kesalahan, silahkan hitung dengan Nominatif manual")
+        
     return redirect('pegawai:nominatif')
 
 
@@ -1076,11 +1079,13 @@ class NominatifTunda(ListView):
         return queryset
 
 def CetakDaftarNominatif(request):
-    request.session['username']
+    userdata = request.session['username']
+    user = User.objects.get(username= userdata)
     opdakses = request.session['opd_akses']
     template_path = 'pegawai/cetaknominatif.html'
     # pegawai = get_object_or_404(PegawaiModel, id=id)
-    nominatif = NominatifxModels.objects.filter(opd_id = opdakses)
+    akun = get_object_or_404(AkunModel, akun_id= user.id )
+    nominatif = NominatifxModels.objects.filter(opd_id = akun.opd_akses_id)
     for data in nominatif:
         datapegawai = get_object_or_404(PegawaiModel, id = data.pegawai_id)
         opd = get_object_or_404(OpdModel, id = datapegawai.opd_id)
