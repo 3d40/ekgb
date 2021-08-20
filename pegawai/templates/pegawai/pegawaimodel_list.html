@@ -26,7 +26,7 @@
         <td><a href="{% url 'pegawai:detail' data.id %}">{{data.nip}}</a></td>
         <td><a href="{% url 'pegawai:detail' data.id %}">{{data.nama}}</a></td>
         <td>{{data.opd}}</td>
-        <td>{{data.tmt_pns}}</td>
+        <td>{{data.tmt_cpns}}</td>
         <td><a class="btn btn-sm btn-info"href="{% url 'pegawai:riwayatpangkat' data.nip %}">Riwayat Pangkat</a></td>
       </tr>
       {% endfor %}

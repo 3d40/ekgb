@@ -30,34 +30,30 @@
       </tr>
     </thead>
     <tbody>
-      
         {% for x in data %}
         <th scope="row" >{{forloop.counter}}</th>
         <td><a href="{% url 'pegawai:detail' x.id %}">{{x.nip}}</a></td>
         <td><a href="{% url 'pegawai:detail' x.id %}">{{x.nama}}</a></td>
         <td>{{x.opd}}</a></td>
         <td>{{tmtkgb_date}}</td>
-        <td>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="skpangkat" checked>
-            <label class="form-check-label" for="skpangkat"></label>
+        <form method="POST" action="{% url 'pegawai:prosesnominatif' x.id %}">
+          {% csrf_token %}  
+          <div>
+            <td>
+              <input class="form-check-input" type="checkbox"  name="berkascheck" value="skpangkat">
+            </td>
+            <td>
+              <input class="form-check-input" type="checkbox"  name="berkascheck" value='skkgb' >
+            </td>
+            <td>
+              <input class="form-check-input"  type="checkbox" name="berkascheck" value='skp' >
+            </td>
           </div>
-        </td>
-        <td>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="skkgb" checked>
-            <label class="form-check-label" for="skkgb"></label>
-          </div>
-        </td>
-        <td>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="skp" checked>
-            <label class="form-check-label" for="skp"></label>
-          </div>
-        </td>
-        <td>
-          <a class="btn btn-sm btn-info"href="{% url 'pegawai:prosesnominatif' x.id %}">Daftarkan</a>
-        </td>
+          <td>
+            <input class="btn btn-sm btn-info" type="submit" value="Daftarkan">
+          </form>
+            <!-- <a class="btn btn-sm btn-info" href="{% url 'pegawai:prosesnominatif' x.id %}" >Daftarkan</a> -->
+          </td>
       </tr>
         {% endfor %}
       </tbody>

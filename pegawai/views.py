@@ -1,9 +1,11 @@
+from typing import Dict, get_args
 from django.db.models import query
 from django.db.models.expressions import Exists, Value, ValueRange
 from django.db.models.fields import CharField
 from django.db.models.query import InstanceCheckMeta, QuerySet, ValuesListIterable
+from django.http.request import QueryDict
 from django.http.response import HttpResponse
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
+from django.shortcuts import get_list_or_404, render, get_object_or_404, redirect, HttpResponseRedirect
 from django.utils.timezone import now
 # from .forms import UserLoginForm
 from django.contrib.auth import (
@@ -417,7 +419,6 @@ def Hitungmasakerja(request, id):
                         pangkatgolongan.mk_tahun = jaraka1.years + cpnscek.mk_tahun
                         pangkatgolongan.mk_bulan = jaraka1.months + cpnscek.mk_bulan
                         pangkatgolongan.save()
-
                     elif pangkatgolongan.nama_id >= 22:
                         # print(pangkatgolongan.nama_id, pangkatgolongan.tanggal)
                         jarak2 = relativedelta(pangkatgolongan.tanggal, pnscek.tanggal)
@@ -467,7 +468,6 @@ def Hitungmasakerja(request, id):
                             pangkatgolongan.mk_bulan = bulanlebih
                             pangkatgolongan.mk_tahun = pangkatgolongan.mk_tahun + 1
                             pangkatgolongan.save()
-
         else:
             cpnscek.mk_tahun = 0
             cpnscek.mk_bulan = 0
@@ -507,37 +507,40 @@ def ProsesBerkalaView(request, id):
     mkbarubulan = jarak.months + datagol.mk_bulan
     usulan =  NominatifxModels.objects.filter(pegawai_id = pegawai.id)
     proses = ProsesBerkalaModel.objects.filter(pegawai_id = pegawai.id)
-
-    print(pegawai.opd_id, pegawai.golongan_id, gaji.id, pegawai.jabatan,datagol.mk_tahun, tmt_kgb, mkbarutahun, jarak.years, mkbarubulan, jarak.months) 
-    if mkbarubulan >= 12:
-        mkbarubulan = mkbarubulan - 12
-        mkbarutahun = mkbarutahun + 1
-        if mkbarutahun % 2 == 0 and mkbarubulan == 0 and usulan.exists() == False and proses.exists() == False:
-            NominatifxModels.objects.create(
-                golongan_id=pegawai.golongan_id, 
-                gaji_id=gaji.id,
-                jabatan=pegawai.jabatan, 
-                mk_tahun=datagol.mk_tahun, 
-                mk_bulan=datagol.mk_bulan,
-                mkb_tahun=mkbarutahun, 
-                mkb_bulan=mkbarubulan,
-                pegawai_id=pegawai.id, 
-                opd_id=pegawai.opd_id, 
-                tmt_kgb=tmt_kgb)
-        elif usulan.exists() == True:
-            return HttpResponse('Data sudah diusulkan..!!!')
-        elif proses.exists() == True:
-            return HttpResponse('Data sedang diproses..!!!')
+    berkas = request.POST.getlist('berkascheck')
+    if request.method == 'POST':
+        if berkas == ['skpangkat','skkgb','skp']:
+            print(pegawai.opd_id, pegawai.golongan_id, gaji.id, pegawai.jabatan,datagol.mk_tahun, tmt_kgb, mkbarutahun, jarak.years, mkbarubulan, jarak.months)
+            if mkbarubulan >= 12:
+                mkbarubulan = mkbarubulan - 12
+                mkbarutahun = mkbarutahun + 1
+                if mkbarutahun % 2 == 0 and mkbarubulan == 0 and usulan.exists() == False and proses.exists() == False:
+                    NominatifxModels.objects.create(
+                        golongan_id=pegawai.golongan_id, 
+                        gaji_id=gaji.id,
+                        jabatan=pegawai.jabatan, 
+                        mk_tahun=datagol.mk_tahun, 
+                        mk_bulan=datagol.mk_bulan,
+                        mkb_tahun=mkbarutahun, 
+                        mkb_bulan=mkbarubulan,
+                        pegawai_id=pegawai.id, 
+                        opd_id=pegawai.opd_id, 
+                        tmt_kgb=tmt_kgb)
+                elif usulan.exists() == True:
+                    return HttpResponse('Data sudah diusulkan..!!!')
+                elif proses.exists() == True:
+                    return HttpResponse('Data sedang diproses..!!!')
+                else:
+                    return HttpResponse("Hitung Otomatis terdapat kesalahan, silahkan hitung dengan Nominatif manual")
         else:
-            return HttpResponse("Hitung Otomatis terdapat kesalahan, silahkan hitung dengan Nominatif manual")
-        
+            return HttpResponse("Berkas tidak Lengkap")  
     return redirect('pegawai:nominatif')
 
 
 def HapusNominatif(request, id):
     hapus = get_object_or_404(NominatifxModels, id = id)
     hapus.delete()
-    return redirect('pegawai:nominatif')
+    return redirect('pegawai:nominatiflist')
 
 
 

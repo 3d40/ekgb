@@ -52,7 +52,7 @@ class GolonganHistoryModel(models.Model):
     nomor_sk = models.CharField(max_length=150, null=True,blank=True, default="S-10225/BKD-2.2/")
     jenis = models.CharField(max_length=50, null=True, blank=True)
     tanggal = models.DateField(default=2021-3-20, blank=True, null=True)
-    gambar = models.FileField(upload_to='upload/berkas/', blank=True, null=True)
+    gambar = models.FileField(upload_to='berkas/', blank=True, null=True)
     mk_tahun = models.IntegerField(null=True, default=0)
     mk_bulan = models.IntegerField(null=True, default=0)
     dasarnominatif = models.BooleanField(null=True, default=False)
@@ -110,7 +110,7 @@ class BerkalaHistoryModel(models.Model):
     mk_baru_tahun  = models.IntegerField(blank=True, null=True)
     mk_baru_bulan  = models.IntegerField(blank=True, null=True)
     nilai= models.IntegerField(null=True, blank=True)
-    dokumen = models.FileField(upload_to='upload/skberkala/', blank=True, null=True)
+    dokumen = models.FileField(upload_to='skberkala/', blank=True, null=True)
     
     
     def __str__(self):

@@ -37,29 +37,30 @@
         <td><a href="{% url 'pegawai:detail' x.pegawai_id %}">{{x.pegawai}}</a></td>
         <td>{{x.opd}}</a></td>
         <td>{{tmtkgb_date}}</td>
-        <td>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="skpangkat" checked>
-            <label class="form-check-label" for="skpangkat"></label>
-          </div>
-        </td>
-        <td>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="skkgb" checked>
-            <label class="form-check-label" for="skkgb"></label>
-          </div>
-        </td>
-        <td>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="skp" checked>
-            <label class="form-check-label" for="skp"></label>
-          </div>
-        </td>
+          <td>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="skpangkat" value='skpangkat' name ='skpangkat' checked>
+              <label class="form-check-label" for="skpangkat"></label>
+            </div>
+          </td>
+          <td>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="skkgb" value='skkgb' name ='skkgb' checked>
+              <label class="form-check-label" for="skkgb"></label>
+            </div>
+          </td>
+          <td>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="skp" value ='skp' name='skp' checked>
+              <label class="form-check-label" for="skp"></label>
+            </div>
+          </td>
         <td>
           <a class="btn btn-sm btn-info" href="{%url 'pegawai:nominatifdetail' x.pegawai_id %}">Detail</a>
           <a class="btn btn-sm btn-info" href="{%url 'pegawai:delnominatif' x.id %}">Hapus</a>
         </td>
       </tr>
+    
         {% endfor %}
       </tbody>
       <td>
