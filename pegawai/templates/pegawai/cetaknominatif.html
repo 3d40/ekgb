@@ -63,12 +63,13 @@
       <th>5</th>
     </thead>
     <tbody >
-        {% for x in nominatiflist %}
+        {% for x in nominatiflist %} 
         <td align="center">{{forloop.counter}}</td>
-        <td>{{x.pegawai}}<br>NIP. {{datapegawai.nip}}</td>
-        <td align="center">{{datapegawai.golongan}}&nbsp;&nbsp;{{simbol}} </a></td>
-        <td align="center">{{datapegawai.jabatan}}</a></td>
+        <td>{{x.pegawai}}<br>NIP. {{x.pegawai.nip}}</td>
+        <td align="center">{{x.golongan}}&nbsp;&nbsp;{{simbol}} </a></td>
+        <td align="center">{{x.jabatan}}</a></td>
         <td align="center">{{x.tmt_kgb}}</a></td>
+
       </tbody>
         {% endfor %}
  </table>

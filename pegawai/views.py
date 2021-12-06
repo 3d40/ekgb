@@ -1089,19 +1089,15 @@ def CetakDaftarNominatif(request):
     # pegawai = get_object_or_404(PegawaiModel, id=id)
     akun = get_object_or_404(AkunModel, akun_id= user.id )
     nominatif = NominatifxModels.objects.filter(opd_id = akun.opd_akses_id)
+    xxx = PegawaiModel.objects.select_related()
     for data in nominatif:
         datapegawai = get_object_or_404(PegawaiModel, id = data.pegawai_id)
         opd = get_object_or_404(OpdModel, id = datapegawai.opd_id)
         kepalaopd = get_object_or_404(PegawaiModel, id = opd.kepala_opd_id)
         cekplt = opd.plt
-        print(cekplt)
-        
-        context = {
-            'nominatiflist': nominatif,
-            'datapegawai':datapegawai,
-            'kepalaopd':kepalaopd,
-            'cekplt':cekplt
-            }
+        print(datapegawai)
+
+        context = {'nominatiflist': nominatif, 'datapegawai':datapegawai, 'kepalaopd':kepalaopd, 'cekplt':cekplt, 'xxx':xxx}
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="nominatif.pdf"'
         template = get_template(template_path)
