@@ -58,7 +58,5 @@ urlpatterns = [
     path('pegawai/jabatan/edit/<int:id>', views.EditJabatanView, name='editjabatan'),
     path('pegawai/cetakdaftarnominatif', views.CetakDaftarNominatif, name='cetaknominatif'),
     path('pegawai/addpegawai/', views.AddPegawaiView, name='addpegawai'),
-
     ]
-    
     

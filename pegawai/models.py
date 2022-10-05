@@ -131,7 +131,7 @@ class AkunModel(models.Model):
     opd_akses = models.ForeignKey('OpdModel', models.DO_NOTHING, blank=True, null=True)
 
     def __unicode__(self):
-        return self.pegawai 
+        return self.akun.nama
 
 
 class ProsesBerkalaModel(models.Model):
@@ -153,9 +153,9 @@ class ProsesBerkalaModel(models.Model):
     tanggal = models.DateTimeField(auto_now_add=timezone.now, blank=True)
     tmt_kgb = models.DateField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True, default='nominatif')
-
     def __str__(self):
-        return self.status
+       return self.pegawai.nama
+
 
 class NominatifxModels(models.Model):
     bahanchoice = (
@@ -177,7 +177,7 @@ class NominatifxModels(models.Model):
     bahan = models.CharField(max_length=20, choices=bahanchoice, blank=True)
     
     def __str__(self):
-        return self.bahan
+        return self.pegawai
 
 
 class NominatifSelesaiModels(models.Model):    

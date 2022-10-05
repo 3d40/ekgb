@@ -10,3 +10,5 @@ from pegawai.models import *
 admin.site.register(AkunModel)
 admin.site.register(GolonganModel)
 admin.site.register(OpdModel)
+admin.site.register(ProsesBerkalaModel)
+admin.site.register(NominatifxModels)

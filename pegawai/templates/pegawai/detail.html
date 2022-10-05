@@ -63,12 +63,12 @@
                         <input id="tmt_pns" name="tmt_pns" class="form-control" value="{{ pegawai.tmt_cpns}}" readonly />
                     </div>
                     <div>
-                    <td>
-                        <input class="btn btn-sm btn-info" type = "submit" value="Update Pegawai">
-                    </td>
                 </form>
                     <td>
                         <a class="btn btn-sm btn-info"href="{% url 'pegawai:riwayatpangkat' pegawai.nip %}">Riwayat Pangkat</a>
+                    </td>
+             <td>
+                        <a class="btn btn-sm btn-info"href="{% url 'pegawai:update' pegawai.id %}">Update Data</a>
                     </td>
                     </div>
                 </div>

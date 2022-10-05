@@ -9,6 +9,7 @@
                 <th scope="col">Nomor</th>
                 <th scope="col">Nama OPD</th>
                 <th scope="col">Kepela Opd</th>
+                <th scope="col">Oprator BKD</th>
                 <th scope="col">Aksi</th>
             </tr>
             </thead>
@@ -19,6 +20,7 @@
                 <td>{{ forloop.counter }}</td>  
                 <td>{{i.nama}}</td>
                 <td>{{i.kepala_opd}}</td>
+                <td>{{i.operator.akun}}</td>
                 <td><a href="{% url 'pegawai:loadpegawai' i.id %}">Load Pegawai</a></td>
             </tr>
             </tbody>

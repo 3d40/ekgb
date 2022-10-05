@@ -1,52 +1,29 @@
-from typing import Dict, get_args
-from django.db.models import query
-from django.db.models.expressions import Exists, Value, ValueRange
-from django.db.models.fields import CharField
-from django.db.models.query import InstanceCheckMeta, QuerySet, ValuesListIterable
-from django.http.request import QueryDict
 from django.http.response import HttpResponse
 from django.shortcuts import get_list_or_404, render, get_object_or_404, redirect, HttpResponseRedirect
-from django.utils.timezone import now
-# from .forms import UserLoginForm
 from django.contrib.auth import (
     authenticate,
     login,
     logout)
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
-import csv
-import io
-from .models import *
-from urllib.request import urlopen
+from urllib.request import  urlopen
 import json
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.generic import ListView
 from . forms import *
 import datetime
 from dateutil.relativedelta import *
-from django.core.exceptions import MultipleObjectsReturned
-from itertools import count, zip_longest
-from django.http import Http404
 from django.views.generic import ListView, DetailView, View
-from django.views.generic.detail import SingleObjectMixin
-from .filter import FilterPegawai
-import os.path
 from xhtml2pdf import pisa
 from django.template.loader import get_template
 
 from socket import error as SocketError
 import errno
 import roman
-from datetime import date
-from django.core import serializers
 
 
 # Create your views here.
-
-urlpegawai = 'http://103.146.244.150:8000/nip/?search='
-urlcompany = 'http://103.146.244.150:8000/nip/?company='
-urlpangkat = 'http://103.146.244.150:8000/riwayatpangkat/?search='
+urlpegawai = 'http://103.114.144.202/nip/?search='
+urlcompany = 'http://103.114.144.202/nip/?company='
+urlpangkat = 'http://103.114.144.202/riwayatpangkat/?search='
 
 
 def LoginView(request):
@@ -57,6 +34,7 @@ def LoginView(request):
         if user is not None:
             akun = AkunModel.objects.get(id =user.id)
             opdakses = request.session['opd_akses'] = akun.jenis_akun
+            print(opdakses)
             if user.is_active:
                 try:
                     request.session['username'] = request.POST['username']
@@ -704,6 +682,7 @@ def LoadPegawaiView(request, id=None):
                 tmt_cpns = cpnstahun,
                 tgllahir = lahir
             )
+            inputdata.save()
         except :
             pass
         cekdata = PegawaiModel.objects.exclude(
@@ -722,6 +701,7 @@ def UpdateDataPegawai(request, id):
         openjson = urlopen(urlpegawai + str(pegawai.nip))
         data = json.load(openjson)
         for x in data:
+            print(x['company_id'])
             pegawai.golongan_id=x['golongan_id']
             pegawai.opd_id=x['company_id']
             pegawai.save()
@@ -729,7 +709,7 @@ def UpdateDataPegawai(request, id):
         if e.errno != errno.ECONNRESET:
             raise # Not error we are looking for
         pass # Handle error here.
-    return redirect('pegawai:detail', pegawai.id)
+    return redirect('pegawai:update', pegawai.id)
 
 
 # class SelesaiList(ListView):
@@ -1228,3 +1208,11 @@ def AddPegawaiView (request):
             )
             return HttpResponse("Berhasil Add Pegawai")
     return render(request,'admin/addpegawai.html')
+
+def deletecindy(request):
+    cindy = ProsesBerkalaModel.objects.get(id = 117)
+    cindy.delete
+    return HttpResponse('SUKSES DELETE')
+
+
+
